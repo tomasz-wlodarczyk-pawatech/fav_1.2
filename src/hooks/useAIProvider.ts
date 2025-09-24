@@ -309,6 +309,87 @@ const MOCK_DATA: Record<string, ApiResponse> = {
         competition: "Football - England - Premier League"
       }
     ]
+  },
+  "mock PSG 1x2 OU": {
+    query: "mock PSG 1x2 OU",
+    user_id: "aag",
+    extracted_filters: {
+      teams: ["PSG"],
+      market_types: ["1x2", "over/under"],
+      min_odds: null,
+      max_odds: null,
+      date_from: null,
+      date_to: null,
+      league: "Ligue 1"
+    },
+    matches: [
+      {
+        home_team: "Paris Saint-Germain",
+        away_team: "Olympique Marseille",
+        match_date: "2025-09-28T19:45:00Z",
+        league: "Ligue 1",
+        relevance: 1,
+        markets: {
+          "1X2 | Full Time": {
+            "1": 1.35,
+            "X": 5.20,
+            "2": 8.50
+          },
+          "Over/Under | Full Time": {
+            "Over 0.5": 1.06,
+            "Under 0.5": 9.25,
+            "Over 1.5": 1.42,
+            "Under 1.5": 2.85,
+            "Over 2.5": 2.05,
+            "Under 2.5": 1.75,
+            "Over 3.5": 3.35,
+            "Under 3.5": 1.32,
+            "Over 4.5": 6.25,
+            "Under 4.5": 1.12
+          }
+        },
+        odds: {
+          "1": 1.35,
+          "X": 5.20,
+          "2": 8.50
+        },
+        event_id: "30125847",
+        competition: "Football - France - Ligue 1"
+      },
+      {
+        home_team: "AS Monaco",
+        away_team: "Paris Saint-Germain",
+        match_date: "2025-10-05T16:00:00Z",
+        league: "Ligue 1",
+        relevance: 1,
+        markets: {
+          "1X2 | Full Time": {
+            "1": 4.20,
+            "X": 3.85,
+            "2": 1.72
+          },
+          "Over/Under | Full Time": {
+            "Over 0.5": 1.08,
+            "Under 0.5": 7.50,
+            "Over 1.5": 1.48,
+            "Under 1.5": 2.65,
+            "Over 2.5": 2.15,
+            "Under 2.5": 1.68,
+            "Over 3.5": 3.55,
+            "Under 3.5": 1.29,
+            "Over 4.5": 6.75,
+            "Under 4.5": 1.10
+          }
+        },
+        odds: {
+          "1": 4.20,
+          "X": 3.85,
+          "2": 1.72
+        },
+        event_id: "30125901",
+        competition: "Football - France - Ligue 1"
+      }
+    ]
   }
 };
 
