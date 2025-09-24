@@ -111,6 +111,109 @@ function pickHTFT(m: ApiMatch) {
   return Object.keys(out).length ? out : null;
 }
 
+// Function to fetch teams data for recognition
+const fetchTeamsForRecognition = async (): Promise<{ teams: any[], leagues: string[] }> => {
+  try {
+    const response = await fetch('https://alluring-inspiration-production.up.railway.app/teams/all');
+    const data = await response.json();
+    
+    const teams: any[] = [];
+    const leagues = data.leagues || [];
+    
+    // Create a flat list of all teams for matching
+    Object.entries(data.all_teams_by_league).forEach(([league, teamNames]: [string, any]) => {
+      (teamNames as string[]).forEach(teamName => {
+        teams.push({
+          id: teamName.toLowerCase().replace(/\s+/g, '-'),
+          name: teamName,
+          league: league
+        });
+      });
+    });
+    
+    return { teams, leagues };
+  } catch (error) {
+    console.error('Failed to fetch teams for recognition:', error);
+    return { teams: [], leagues: [] };
+  }
+};
+
+// Function to auto-add recognized teams and leagues to favorites
+const autoAddToFavorites = async (extractedFilters?: ApiResponse['extracted_filters']) => {
+  if (!extractedFilters) return;
+  
+  const { teams: allTeams, leagues: allLeagues } = await fetchTeamsForRecognition();
+  
+  // Auto-add recognized teams
+  if (extractedFilters.teams && extractedFilters.teams.length > 0) {
+    const recognizedTeams: any[] = [];
+    
+    extractedFilters.teams.forEach(extractedTeam => {
+      // Find matching team (case-insensitive, partial match)
+      const matchedTeam = allTeams.find(team => 
+        team.name.toLowerCase().includes(extractedTeam.toLowerCase()) ||
+        extractedTeam.toLowerCase().includes(team.name.toLowerCase())
+      );
+      
+      if (matchedTeam) {
+        recognizedTeams.push({
+          id: matchedTeam.id,
+          name: matchedTeam.name,
+          subtitle: `Football • ${matchedTeam.league}`,
+          logo: "⚽" // Default logo, could be enhanced
+        });
+      }
+    });
+    
+    if (recognizedTeams.length > 0) {
+      // Get existing favorites
+      const existingTeams = JSON.parse(localStorage.getItem('favTeams') || '[]');
+      const existingIds = existingTeams.map((t: any) => t.id);
+      
+      // Add only new teams
+      const newTeams = recognizedTeams.filter(team => !existingIds.includes(team.id));
+      
+      if (newTeams.length > 0) {
+        const updatedTeams = [...existingTeams, ...newTeams];
+        localStorage.setItem('favTeams', JSON.stringify(updatedTeams));
+        window.dispatchEvent(new CustomEvent("fav:teams:updated"));
+        
+        // Show notification to user about auto-added teams
+        console.log(`Auto-added ${newTeams.length} team(s) to favorites:`, newTeams.map(t => t.name));
+      }
+    }
+  }
+  
+  // Auto-add recognized league
+  if (extractedFilters.league) {
+    const matchedLeague = allLeagues.find(league => 
+      league.toLowerCase().includes(extractedFilters.league!.toLowerCase()) ||
+      extractedFilters.league!.toLowerCase().includes(league.toLowerCase())
+    );
+    
+    if (matchedLeague) {
+      const existingLeagues = JSON.parse(localStorage.getItem('favLeagues') || '[]');
+      const leagueId = matchedLeague.toLowerCase().replace(/\s+/g, '-');
+      const exists = existingLeagues.some((l: any) => l.id === leagueId);
+      
+      if (!exists) {
+        const newLeague = {
+          id: leagueId,
+          name: matchedLeague,
+          country: "Europe", // Default, could be enhanced
+          emoji: "🏆"
+        };
+        
+        const updatedLeagues = [...existingLeagues, newLeague];
+        localStorage.setItem('favLeagues', JSON.stringify(updatedLeagues));
+        window.dispatchEvent(new CustomEvent("fav:leagues:updated"));
+        
+        console.log(`Auto-added league to favorites: ${matchedLeague}`);
+      }
+    }
+  }
+};
+
 export function useAIProvider() {
   const abortRef = useRef<AbortController | null>(null);
 
@@ -143,6 +246,12 @@ export function useAIProvider() {
 
     let data: ApiResponse;
     try { data = await res.json(); } catch { return []; }
+    
+    // Auto-add recognized teams and leagues to favorites after successful search
+    if (data.matches && data.matches.length > 0) {
+      // Run in background after search results are processed
+      setTimeout(() => autoAddToFavorites(data.extracted_filters), 100);
+    }
 
     // map requested market filters to our kinds
     const wanted = (data.extracted_filters?.market_types || []).map(norm);
