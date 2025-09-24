@@ -76,7 +76,8 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
       
       // Execute search immediately without debounce for favorites
       setIsLoading(true);
-      search(q.trim()).then(() => {
+      search(q.trim()).then((searchResults) => {
+        setResults(searchResults);
         setIsLoading(false);
         setTimeout(() => {
           onClose(); // Close the modal
@@ -98,7 +99,7 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
     const timeoutId = setTimeout(async () => {
       setIsLoading(true);
       setError(null);
-      setResults([]);
+      // Don't clear results immediately - causes flicker
       
       try {
         const searchResults = await search(q.trim());

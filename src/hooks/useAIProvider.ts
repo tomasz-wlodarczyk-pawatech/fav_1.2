@@ -1127,11 +1127,18 @@ export function useAIProvider() {
       return items;
     }
 
-    try { abortRef.current?.abort(); } catch {}
+    // Only abort if there's a different query in progress
+    if (abortRef.current && !abortRef.current.signal.aborted) {
+      try { abortRef.current.abort(); } catch {}
+    }
     abortRef.current = new AbortController();
 
     const timeoutMs = opts?.timeoutMs ?? 20000; // 20s default
-    const timeout = setTimeout(() => abortRef.current?.abort(), timeoutMs);
+    const timeout = setTimeout(() => {
+      if (abortRef.current && !abortRef.current.signal.aborted) {
+        abortRef.current.abort();
+      }
+    }, timeoutMs);
 
     const body = { query: q, user_id: opts?.userId ?? "make-proto", max_results: opts?.max ?? 20, llm_provider: "openai" };
 
