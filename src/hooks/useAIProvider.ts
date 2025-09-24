@@ -1,4 +1,5 @@
 import { useCallback, useRef } from "react";
+import { favoritesStore } from "../lib/favoritesStore";
 
 type MarketsMap = Record<string, Record<string, number | string>>;
 
@@ -616,6 +617,18 @@ export function useAIProvider() {
           if (x) items.push({ kind: "htft", ...base, data: x });
         }
       }
+
+      // Check if query contains "favorite"/"favourite" and auto-add events to favorites
+      if (/\b(favorite|favourite)\b/i.test(q)) {
+        const eventIds = items.map(item => item.id);
+        if (eventIds.length > 0) {
+          const currentFavorites = favoritesStore.get();
+          const newFavorites = [...currentFavorites, ...eventIds.filter(id => !currentFavorites.includes(id))];
+          favoritesStore.set(newFavorites);
+          console.log(`🌟 Auto-added ${eventIds.length} event(s) to favorites:`, eventIds);
+        }
+      }
+
       return items;
     }
 
@@ -692,6 +705,18 @@ export function useAIProvider() {
         if (x) items.push({ kind: "htft", ...base, data: x });
       }
     }
+
+    // Check if query contains "favorite"/"favourite" and auto-add events to favorites
+    if (/\b(favorite|favourite)\b/i.test(q)) {
+      const eventIds = items.map(item => item.id);
+      if (eventIds.length > 0) {
+        const currentFavorites = favoritesStore.get();
+        const newFavorites = [...currentFavorites, ...eventIds.filter(id => !currentFavorites.includes(id))];
+        favoritesStore.set(newFavorites);
+        console.log(`🌟 Auto-added ${eventIds.length} event(s) to favorites:`, eventIds);
+      }
+    }
+
     return items;
   }, []);
 
