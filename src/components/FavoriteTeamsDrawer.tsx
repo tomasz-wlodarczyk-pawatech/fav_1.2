@@ -221,6 +221,29 @@ export function FavoriteTeamsDrawer({ isOpen, onClose, onSave, initialSelectedTe
     }
   }, [isOpen]);
 
+  // Listen for favorites updates and sync selectedTeams
+  useEffect(() => {
+    const handleFavoritesUpdate = () => {
+      try {
+        const favTeams = JSON.parse(localStorage.getItem('favTeams') || '[]');
+        const teamIds = favTeams.map((team: any) => team.id);
+        setSelectedTeams(teamIds);
+      } catch (error) {
+        console.error('Error syncing favorite teams:', error);
+      }
+    };
+
+    // Sync initial state
+    handleFavoritesUpdate();
+
+    // Listen for updates
+    window.addEventListener('fav:teams:updated', handleFavoritesUpdate);
+    
+    return () => {
+      window.removeEventListener('fav:teams:updated', handleFavoritesUpdate);
+    };
+  }, []);
+
   if (!isOpen) return null;
 
   const filteredTeams = teamsData.filter(team => {
