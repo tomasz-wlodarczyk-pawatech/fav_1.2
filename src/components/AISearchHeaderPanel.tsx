@@ -28,7 +28,7 @@ export default function AISearchHeaderPanel({ isOpen, onClose, initialQuery = ""
 
   if (!isOpen) return null;
 
-  // Reset state when modal opens
+  // Reset state and trigger search when modal opens
   useEffect(() => {
     if (isOpen) {
       setQ(initialQuery);
@@ -36,10 +36,15 @@ export default function AISearchHeaderPanel({ isOpen, onClose, initialQuery = ""
       setIsLoading(false);
       setResults([]);
       setError(null);
+      
+      // Auto-search if initialQuery is provided
+      if (initialQuery.trim()) {
+        runSearch();
+      }
     }
   }, [isOpen, initialQuery]);
 
-  async function runSearch() {
+  const runSearch = async () => {
     const query = q.trim();
     if (!query) return;
     setSubmitted(true);
@@ -55,7 +60,23 @@ export default function AISearchHeaderPanel({ isOpen, onClose, initialQuery = ""
     } finally {
       setIsLoading(false);
     }
-  }
+  };
+
+  // Reset state and trigger search when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setQ(initialQuery);
+      setSubmitted(false);
+      setIsLoading(false);
+      setResults([]);
+      setError(null);
+      
+      // Auto-search if initialQuery is provided
+      if (initialQuery.trim()) {
+        setTimeout(() => runSearch(), 100);
+      }
+    }
+  }, [isOpen, initialQuery]);
 
   const onEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {

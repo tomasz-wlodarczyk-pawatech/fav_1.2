@@ -20,7 +20,30 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
   const [error, setError] = useState<string | null>(null);
   const { search } = useAIProvider();
 
-  useEffect(() => setQ(initialQuery), [initialQuery]);
+  useEffect(() => {
+    setQ(initialQuery);
+    // Trigger search immediately when drawer opens with a query
+    if (isOpen && initialQuery.trim() && initialQuery.trim().length >= 2) {
+      setIsLoading(true);
+      setError(null);
+      setResults([]);
+      
+      const timeoutId = setTimeout(async () => {
+        try {
+          const searchResults = await search(initialQuery.trim());
+          setResults(searchResults);
+        } catch (err) {
+          setError(err instanceof Error ? err.message : "Search failed");
+          setResults([]);
+        } finally {
+          setIsLoading(false);
+        }
+      }, 100); // Short delay to show loading
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [initialQuery, isOpen, search]);
+  
   useEffect(() => { if (isOpen) setMounted(true); }, [isOpen]);
 
   // Close on ESC
