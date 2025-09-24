@@ -226,8 +226,6 @@ function HeroSection({ isEditMode, onEditClick, coreRef }: { isEditMode: boolean
 }
 
 // MyApps (2x2) — replaces TrendingAppsComponent
-import { Link } from "react-router-dom";
-import { Brain, Sparkles, MessageSquare, BarChart3 } from "lucide-react";
 
 function AppTile({
   to,
