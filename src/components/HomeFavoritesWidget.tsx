@@ -187,13 +187,14 @@ export default function HomeFavoritesWidget() {
         setActiveTab={setActiveTab}
       />
 
-      <div className="mt-3">
+      <div>
         {activeTab === "events" && (
           <>
             <div className="space-y-4">
               {/* Market Favorites Section */}
               {favMarketItems.length > 0 && (
                 <div>
+                  <div className="border-t border-gray-200 mb-3"></div>
                   <h4 className="text-xs font-medium text-gray-600 mb-2 uppercase tracking-wide">Favorite Markets</h4>
                   <div className="space-y-2">
                     {favMarketItems.map((rec) => (
