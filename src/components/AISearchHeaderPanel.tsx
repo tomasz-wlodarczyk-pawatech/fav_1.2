@@ -121,9 +121,6 @@ export default function AISearchHeaderPanel({ isOpen, onClose, initialQuery = ""
                 </div>
               )}
 
-              {submitted && !isLoading && results.length === 0 && !error && (
-                <div className="text-xs text-gray-500 px-1 py-2">No results for "{q}".</div>
-              )}
 
               {results.map((r: any) => {
                 if (r.kind === "1x2") {
