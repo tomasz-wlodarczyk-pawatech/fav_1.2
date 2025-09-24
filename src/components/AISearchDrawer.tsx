@@ -19,7 +19,6 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
   const [hasSearchExecuted, setHasSearchExecuted] = useState(false);
   const [results, setResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [showExtendedMessage, setShowExtendedMessage] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { search } = useAIProvider();
   const navigate = useNavigate();
@@ -52,23 +51,8 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
       setError(null);
       setQ("");
       setIsLoading(false);
-      setShowExtendedMessage(false);
     }
   }, [isOpen]);
-
-  // Show extended loading message after 6 seconds
-  useEffect(() => {
-    if (!isLoading) {
-      setShowExtendedMessage(false);
-      return;
-    }
-
-    const extendedMessageTimeout = setTimeout(() => {
-      setShowExtendedMessage(true);
-    }, 6000); // 6 seconds
-
-    return () => clearTimeout(extendedMessageTimeout);
-  }, [isLoading]);
 
   // Unified search effect 
   useEffect(() => {
@@ -108,9 +92,6 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
       return;
     }
 
-    // Skip if already executed for this query (prevents duplicate executions)
-    if (hasSearchExecuted && q === initialQuery) return;
-
     const delay = isInitialQuery ? 100 : 500; // Fast for initial, debounced for typing
     if (isInitialQuery) setHasSearchExecuted(true);
 
@@ -131,7 +112,7 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
     }, delay);
 
     return () => clearTimeout(timeoutId);
-  }, [q, isOpen, initialQuery, hasSearchExecuted]); // Reduced dependencies
+  }, [q, search, onClose, navigate, isOpen, initialQuery, hasSearchExecuted]);
 
   if (!mounted) return null;
 
@@ -169,16 +150,9 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
           <div className="max-h-[65vh] overflow-y-auto px-4 pb-6 space-y-3">
 
             {(isLoading || (q && results.length === 0 && !error)) && (
-              <div className="flex flex-col items-center justify-center py-8 space-y-2">
-                <div className="flex items-center">
-                  <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
-                  <span className="ml-2 text-sm text-gray-500">Searching...</span>
-                </div>
-                {showExtendedMessage && (
-                  <span className="text-xs text-gray-400 animate-pulse">
-                    Just a moment, we're finding the best matches for you...
-                  </span>
-                )}
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+                <span className="ml-2 text-sm text-gray-500">Searching...</span>
               </div>
             )}
 
