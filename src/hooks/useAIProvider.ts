@@ -750,7 +750,11 @@ const makeEventId = (m: ApiMatch) => {
 function pick1x2(m: ApiMatch) {
   const name = Object.keys(m.markets || {}).find(k => /(^|\s)1x2(\s|\|)/i.test(k));
   const src = name ? (m.markets as any)[name] : (m.odds || {});
-  const g = (v: any) => (v == null ? undefined : String(v));
+  const g = (v: any) => {
+    if (v == null || v === 0 || v === "0") return undefined;
+    const num = Number(v);
+    return (num > 0) ? String(v) : undefined;
+  };
   return { one: g(src?.["1"]), draw: g(src?.["X"]), two: g(src?.["2"]) };
 }
 
@@ -1052,7 +1056,9 @@ export function useAIProvider() {
 
         if (restrictTo.has("1x2")) {
           const x = pick1x2(m);
-          if ((x.one || x.draw || x.two) && marketMeetsOddsCriteria(x, minOdds, maxOdds)) {
+          // Only create 1X2 market if we have at least 2 of the 3 outcomes, or all 3
+          const validOutcomes = [x.one, x.draw, x.two].filter(Boolean).length;
+          if (validOutcomes >= 2 && marketMeetsOddsCriteria(x, minOdds, maxOdds)) {
             items.push({ kind: "1x2", ...base, data: x });
           }
         }
@@ -1174,7 +1180,9 @@ export function useAIProvider() {
 
       if (restrictTo.has("1x2")) {
         const x = pick1x2(m);
-        if ((x.one || x.draw || x.two) && marketMeetsOddsCriteria(x, minOdds, maxOdds)) {
+        // Only create 1X2 market if we have at least 2 of the 3 outcomes, or all 3
+        const validOutcomes = [x.one, x.draw, x.two].filter(Boolean).length;
+        if (validOutcomes >= 2 && marketMeetsOddsCriteria(x, minOdds, maxOdds)) {
           items.push({ kind: "1x2", ...base, data: x });
         }
       }
