@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Search, Heart, Check } from "lucide-react";
 
 const MAX_SELECTED = 5;
@@ -49,6 +49,29 @@ export function FavoriteLeaguesDrawer({ isOpen, onClose, onSave, initialSelected
   const [selectedLeagues, setSelectedLeagues] = useState<string[]>(initialSelectedLeagues);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("All");
+
+  // Listen for favorites updates and sync selectedLeagues
+  useEffect(() => {
+    const handleLeaguesUpdate = () => {
+      try {
+        const favLeagues = JSON.parse(localStorage.getItem('favLeagues') || '[]');
+        const leagueIds = favLeagues.map((league: any) => league.id);
+        setSelectedLeagues(leagueIds);
+      } catch (error) {
+        console.error('Error syncing favorite leagues:', error);
+      }
+    };
+
+    // Sync initial state
+    handleLeaguesUpdate();
+
+    // Listen for updates
+    window.addEventListener('fav:leagues:updated', handleLeaguesUpdate);
+    
+    return () => {
+      window.removeEventListener('fav:leagues:updated', handleLeaguesUpdate);
+    };
+  }, []);
 
   if (!isOpen) return null;
 
