@@ -139,22 +139,75 @@ const fetchTeamsForRecognition = async (): Promise<{ teams: any[], leagues: stri
 };
 
 // Function to auto-add recognized teams and leagues to favorites
-const autoAddToFavorites = async (extractedFilters?: ApiResponse['extracted_filters']) => {
-  if (!extractedFilters) return;
-  
+const autoAddToFavorites = async (query: string, extractedFilters?: ApiResponse['extracted_filters']) => {
   const { teams: allTeams, leagues: allLeagues } = await fetchTeamsForRecognition();
   
-  // Auto-add recognized teams
-  if (extractedFilters.teams && extractedFilters.teams.length > 0) {
-    const recognizedTeams: any[] = [];
+  // Enhanced direct league recognition from query text
+  const directLeagueCheck = (queryText: string) => {
+    const lowerQuery = queryText.toLowerCase();
     
-    extractedFilters.teams.forEach(extractedTeam => {
-      // Find matching team (case-insensitive, partial match)
-      const matchedTeam = allTeams.find(team => 
+    // Direct league mentions with "I like" or similar phrases
+    if (/\b(i\s+like|love|follow|support|favorite|favourite)\b/i.test(lowerQuery)) {
+      for (const league of allLeagues) {
+        if (lowerQuery.includes(league.toLowerCase())) {
+          return league;
+        }
+      }
+    }
+    
+    // Also check for direct league mentions without "I like"
+    for (const league of allLeagues) {
+      if (lowerQuery.includes(league.toLowerCase())) {
+        return league;
+      }
+    }
+    
+    return null;
+  };
+  
+  // Enhanced direct team recognition from query text
+  const directTeamCheck = (queryText: string) => {
+    const lowerQuery = queryText.toLowerCase();
+    const foundTeams: any[] = [];
+    
+    // Check for "I like [team]" or similar phrases
+    if (/\b(i\s+like|love|follow|support|favorite|favourite)\b/i.test(lowerQuery)) {
+      for (const team of allTeams) {
+        if (lowerQuery.includes(team.name.toLowerCase()) || 
+            lowerQuery.includes(team.name.toLowerCase().replace(/\s+/g, '')) ||
+            team.name.toLowerCase().includes(lowerQuery.replace(/\b(i\s+like|love|follow|support|favorite|favourite)\s+/i, '').trim())) {
+          foundTeams.push(team);
+        }
+      }
+    }
+    
+    // Also check for direct team mentions
+    for (const team of allTeams) {
+      if (lowerQuery.includes(team.name.toLowerCase())) {
+        foundTeams.push(team);
+      }
+    }
+    
+    return foundTeams;
+  };
+  
+  // Check for direct mentions in the query first
+  const directLeague = directLeagueCheck(query);
+  const directTeams = directTeamCheck(query);
+  
+  // Auto-add directly mentioned teams or extracted teams
+  const teamsToProcess = directTeams.length > 0 ? directTeams : 
+    (extractedFilters?.teams || []).map(extractedTeam => {
+      return allTeams.find(team => 
         team.name.toLowerCase().includes(extractedTeam.toLowerCase()) ||
         extractedTeam.toLowerCase().includes(team.name.toLowerCase())
       );
-      
+    }).filter(Boolean);
+  
+  if (teamsToProcess.length > 0) {
+    const recognizedTeams: any[] = [];
+    
+    teamsToProcess.forEach(matchedTeam => {
       if (matchedTeam) {
         recognizedTeams.push({
           id: matchedTeam.id,
@@ -184,14 +237,15 @@ const autoAddToFavorites = async (extractedFilters?: ApiResponse['extracted_filt
     }
   }
   
-  // Auto-add recognized league
-  if (extractedFilters.league) {
-    const matchedLeague = allLeagues.find(league => 
+  // Auto-add directly mentioned league or extracted league
+  const leagueToAdd = directLeague || 
+    (extractedFilters?.league ? allLeagues.find(league => 
       league.toLowerCase().includes(extractedFilters.league!.toLowerCase()) ||
       extractedFilters.league!.toLowerCase().includes(league.toLowerCase())
-    );
-    
-    if (matchedLeague) {
+    ) : null);
+  
+  if (leagueToAdd) {
+    const matchedLeague = leagueToAdd;
       const existingLeagues = JSON.parse(localStorage.getItem('favLeagues') || '[]');
       const leagueId = matchedLeague.toLowerCase().replace(/\s+/g, '-');
       const exists = existingLeagues.some((l: any) => l.id === leagueId);
@@ -248,10 +302,8 @@ export function useAIProvider() {
     try { data = await res.json(); } catch { return []; }
     
     // Auto-add recognized teams and leagues to favorites after successful search
-    if (data.matches && data.matches.length > 0) {
-      // Run in background after search results are processed
-      setTimeout(() => autoAddToFavorites(data.extracted_filters), 100);
-    }
+    // Always run recognition, even if no matches (for direct statements like "I like PSG")
+    setTimeout(() => autoAddToFavorites(q, data.extracted_filters), 100);
 
     // map requested market filters to our kinds
     const wanted = (data.extracted_filters?.market_types || []).map(norm);
