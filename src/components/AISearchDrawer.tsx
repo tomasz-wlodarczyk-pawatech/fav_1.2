@@ -26,6 +26,21 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
     setQ(initialQuery);
     // Trigger search immediately when drawer opens with a query
     if (isOpen && initialQuery.trim() && initialQuery.trim().length >= 2) {
+      // Check if query contains "favorite"/"favourite" first - instant response
+      if (/\b(favorite|favourite)\b/i.test(initialQuery.trim())) {
+        console.log("🎯 Query contains 'favorite' - executing search and navigating instantly");
+        
+        // Execute search immediately without delay for favorites
+        search(initialQuery.trim()).then(() => {
+          onClose(); // Close the modal
+          navigate('/favorites'); // Navigate to favorites
+        }).catch(() => {
+          onClose();
+          navigate('/favorites');
+        });
+        return;
+      }
+      
       setIsLoading(true);
       setError(null);
       setResults([]);
@@ -33,15 +48,6 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
       const timeoutId = setTimeout(async () => {
         try {
           const searchResults = await search(initialQuery.trim());
-          
-          // Check if query contains "favorite"/"favourite" - if so, navigate directly to favorites
-          if (/\b(favorite|favourite)\b/i.test(initialQuery.trim())) {
-            console.log("🎯 Query contains 'favorite' - navigating to favorites page");
-            onClose(); // Close the modal
-            navigate('/favorites'); // Navigate to favorites
-            return; // Don't set results
-          }
-          
           setResults(searchResults);
         } catch (err) {
           setError(err instanceof Error ? err.message : "Search failed");
@@ -83,21 +89,30 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
       return;
     }
 
+    // Check if query contains "favorite"/"favourite" first - instant response
+    if (/\b(favorite|favourite)\b/i.test(q.trim())) {
+      console.log("🎯 Query contains 'favorite' - executing search and navigating instantly");
+      
+      // Execute search immediately without debounce for favorites
+      setIsLoading(true);
+      search(q.trim()).then(() => {
+        setIsLoading(false);
+        onClose(); // Close the modal
+        navigate('/favorites'); // Navigate to favorites
+      }).catch(() => {
+        setIsLoading(false);
+        onClose();
+        navigate('/favorites');
+      });
+      return;
+    }
+
     const timeoutId = setTimeout(async () => {
       setIsLoading(true);
       setError(null);
       setResults([]); // Clear previous results when starting new search
       try {
         const searchResults = await search(q.trim());
-        
-        // Check if query contains "favorite"/"favourite" - if so, navigate directly to favorites
-        if (/\b(favorite|favourite)\b/i.test(q.trim())) {
-          console.log("🎯 Query contains 'favorite' - navigating to favorites page");
-          onClose(); // Close the modal
-          navigate('/favorites'); // Navigate to favorites
-          return; // Don't set results
-        }
-        
         setResults(searchResults);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Search failed");
