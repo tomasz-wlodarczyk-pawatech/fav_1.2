@@ -144,6 +144,7 @@ const autoAddToFavorites = async (query: string, extractedFilters?: ApiResponse[
   
   // Enhanced direct league recognition from query text
   const directLeagueCheck = (queryText: string) => {
+    if (!queryText || typeof queryText !== 'string') return null;
     const lowerQuery = queryText.toLowerCase();
     
     // Direct league mentions with "I like" or similar phrases
@@ -167,23 +168,35 @@ const autoAddToFavorites = async (query: string, extractedFilters?: ApiResponse[
   
   // Enhanced direct team recognition from query text
   const directTeamCheck = (queryText: string) => {
+    if (!queryText || typeof queryText !== 'string') return [];
     const lowerQuery = queryText.toLowerCase();
     const foundTeams: any[] = [];
     
     // Check for "I like [team]" or similar phrases
     if (/\b(i\s+like|love|follow|support|favorite|favourite)\b/i.test(lowerQuery)) {
+      const cleanedQuery = lowerQuery.replace(/\b(i\s+like|love|follow|support|favorite|favourite)\s+/i, '').trim();
       for (const team of allTeams) {
-        if (lowerQuery.includes(team.name.toLowerCase()) || 
-            lowerQuery.includes(team.name.toLowerCase().replace(/\s+/g, '')) ||
-            team.name.toLowerCase().includes(lowerQuery.replace(/\b(i\s+like|love|follow|support|favorite|favourite)\s+/i, '').trim())) {
+        const teamLower = team.name.toLowerCase();
+        // Enhanced matching: exact, partial, and keyword matches
+        if (lowerQuery.includes(teamLower) || 
+            teamLower.includes(cleanedQuery) ||
+            cleanedQuery.includes(teamLower) ||
+            // Handle cases like "Juventus" matching "Juventus Turin"
+            teamLower.split(' ').some(word => cleanedQuery.includes(word) && word.length > 3) ||
+            cleanedQuery.split(' ').some(word => teamLower.includes(word) && word.length > 3)) {
           foundTeams.push(team);
         }
       }
     }
     
-    // Also check for direct team mentions
+    // Also check for direct team mentions with enhanced matching
     for (const team of allTeams) {
-      if (lowerQuery.includes(team.name.toLowerCase())) {
+      const teamLower = team.name.toLowerCase();
+      if (lowerQuery.includes(teamLower) ||
+          teamLower.includes(lowerQuery) ||
+          // Handle partial matches like "juventus" → "juventus turin"
+          teamLower.split(' ').some(word => lowerQuery.includes(word) && word.length > 3) ||
+          lowerQuery.split(' ').some(word => teamLower.includes(word) && word.length > 3)) {
         foundTeams.push(team);
       }
     }
@@ -264,7 +277,6 @@ const autoAddToFavorites = async (query: string, extractedFilters?: ApiResponse[
         
         console.log(`Auto-added league to favorites: ${matchedLeague}`);
       }
-    }
   }
 };
 
