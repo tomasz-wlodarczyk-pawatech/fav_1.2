@@ -88,8 +88,7 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
           </div>
 
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3">
-            <h3 className="text-lg font-semibold text-gray-900">Search Results</h3>
+          <div className="flex items-center justify-end px-4 py-3">
             <button
               className="w-8 h-8 rounded-lg border border-gray-200 bg-white text-gray-600 flex items-center justify-center hover:bg-gray-50 active:bg-gray-100"
               onClick={onClose}
