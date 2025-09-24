@@ -24,6 +24,7 @@ interface Team {
   league: string;
   logo: string;
   isPopular?: boolean;
+  rank?: number;
 }
 
 // Team logos mapping
@@ -155,8 +156,18 @@ const fetchTeamsData = async (): Promise<Team[]> => {
     const response = await fetch('https://alluring-inspiration-production.up.railway.app/teams/all');
     const data: ApiResponse = await response.json();
     
-    // Get top 5 popular teams
-    const popularTeamNames = data.most_popular_teams.slice(0, 5).map(team => team.team_name);
+    // Get top 5 popular teams sorted by rank (1, 2, 3, 4, 5)
+    const sortedPopularTeams = data.most_popular_teams
+      .sort((a, b) => a.rank - b.rank)
+      .slice(0, 5);
+    
+    const popularTeamNames = sortedPopularTeams.map(team => team.team_name);
+    
+    // Create rank mapping for quick lookup
+    const teamRankMap = new Map();
+    sortedPopularTeams.forEach(team => {
+      teamRankMap.set(team.team_name, team.rank);
+    });
     
     // Convert API data to Team format
     const teams: Team[] = [];
@@ -170,7 +181,8 @@ const fetchTeamsData = async (): Promise<Team[]> => {
           sport: "Football",
           league: league,
           logo: teamLogos[teamName] || "⚽",
-          isPopular: popularTeamNames.includes(teamName)
+          isPopular: popularTeamNames.includes(teamName),
+          rank: teamRankMap.get(teamName)
         });
       });
     });
@@ -227,7 +239,9 @@ export function FavoriteTeamsDrawer({ isOpen, onClose, onSave, initialSelectedTe
     return matchesSearch && matchesSport;
   });
 
-  const popularTeams = filteredTeams.filter(team => team.isPopular);
+  const popularTeams = filteredTeams
+    .filter(team => team.isPopular)
+    .sort((a, b) => (a.rank || 999) - (b.rank || 999));
   
   // Group other teams by league
   const teamsByLeague = filteredTeams.filter(team => !team.isPopular).reduce((acc, team) => {
