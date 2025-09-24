@@ -51,6 +51,7 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
     const timeoutId = setTimeout(async () => {
       setIsLoading(true);
       setError(null);
+      setResults([]); // Clear previous results when starting new search
       try {
         const searchResults = await search(q.trim());
         setResults(searchResults);
@@ -115,7 +116,7 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
               </div>
             )}
 
-            {(isLoading || (q && results.length === 0 && !error)) && (
+            {isLoading && (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
                 <span className="ml-2 text-sm text-gray-500">Searching...</span>

@@ -34,6 +34,7 @@ export default function AISearchHeaderPanel({ isOpen, onClose, initialQuery = ""
     setSubmitted(true);
     setIsLoading(true);
     setError(null);
+    setResults([]); // Clear previous results when starting new search
     try {
       // give the API more time (20s). If your hook ignores options, no harm.
       const out = await search(query, { timeoutMs: 20000 });
@@ -108,7 +109,7 @@ export default function AISearchHeaderPanel({ isOpen, onClose, initialQuery = ""
                 </div>
               )}
 
-              {(isLoading || (submitted && results.length === 0 && !error)) && (
+              {isLoading && (
                 <div className="flex items-center justify-center py-8">
                   <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
                   <span className="ml-2 text-sm text-gray-500">Searching...</span>
