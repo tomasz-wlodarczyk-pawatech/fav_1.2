@@ -1,0 +1,147 @@
+{
+  "all_teams_by_league": {
+    "Premier League": [
+      "AFC Bournemouth",
+      "Arsenal FC",
+      "Aston Villa",
+      "Brentford FC",
+      "Brighton & Hove Albion",
+      "Burnley FC",
+      "Chelsea FC",
+      "Crystal Palace",
+      "Everton FC",
+      "Fulham FC",
+      "Leeds United",
+      "Liverpool FC",
+      "Manchester City",
+      "Manchester United",
+      "Newcastle United",
+      "Nottingham Forest",
+      "Sunderland AFC",
+      "Tottenham Hotspur",
+      "West Ham United",
+      "Wolverhampton Wanderers"
+    ],
+    "Serie A": [
+      "AC Milan",
+      "ACF Fiorentina",
+      "AS Roma",
+      "Atalanta BC",
+      "Bologna FC",
+      "Cagliari Calcio",
+      "Como 1907",
+      "Genoa CFC",
+      "Hellas Verona",
+      "Inter Milano",
+      "Juventus Turin",
+      "Lazio Rome",
+      "Parma Calcio",
+      "Pisa SC",
+      "SSC Napoli",
+      "Sassuolo Calcio",
+      "Torino FC",
+      "US Cremonese",
+      "US Lecce",
+      "Udinese Calcio"
+    ],
+    "Bundesliga": [
+      "1. FC Cologne",
+      "1. FC Heidenheim",
+      "Bayer Leverkusen",
+      "Bayern Munich",
+      "Borussia Dortmund",
+      "Borussia Monchengladbach",
+      "Eintracht Frankfurt",
+      "FC Augsburg",
+      "FC St. Pauli",
+      "FSV Mainz",
+      "Hamburger SV",
+      "RB Leipzig",
+      "SC Freiburg",
+      "TSG Hoffenheim",
+      "Union Berlin",
+      "VfB Stuttgart",
+      "VfL Wolfsburg",
+      "Werder Bremen"
+    ],
+    "La Liga": [
+      "Athletic Bilbao",
+      "Atletico Madrid",
+      "CA Osasuna",
+      "Deportivo Alaves",
+      "Elche CF",
+      "Espanyol Barcelona",
+      "FC Barcelona",
+      "Getafe CF",
+      "Girona FC",
+      "Levante UD",
+      "RC Celta de Vigo",
+      "RCD Mallorca",
+      "Rayo Vallecano",
+      "Real Betis Seville",
+      "Real Madrid",
+      "Real Oviedo",
+      "Real Sociedad San Sebastian",
+      "Sevilla FC",
+      "Valencia CF",
+      "Villarreal CF"
+    ],
+    "Ligue 1": [
+      "AJ Auxerre",
+      "AS Monaco",
+      "Angers SCO",
+      "FC Lorient",
+      "FC Metz",
+      "FC Nantes",
+      "Le Havre AC",
+      "Lille OSC",
+      "OGC Nice",
+      "Olympique Lyon",
+      "Olympique Marseille",
+      "Paris FC",
+      "Paris Saint-Germain",
+      "RC Lens",
+      "Stade Brest 29",
+      "Stade Rennes",
+      "Strasbourg Alsace",
+      "Toulouse FC"
+    ]
+  },
+  "most_popular_teams": [
+    {
+      "team_name": "Real Madrid",
+      "favorite_count": 65848982,
+      "rank": 1
+    },
+    {
+      "team_name": "FC Barcelona",
+      "favorite_count": 59474308,
+      "rank": 2
+    },
+    {
+      "team_name": "Manchester City",
+      "favorite_count": 55027587,
+      "rank": 3
+    },
+    {
+      "team_name": "Paris Saint-Germain",
+      "favorite_count": 54453676,
+      "rank": 4
+    },
+    {
+      "team_name": "Arsenal FC",
+      "favorite_count": 52943205,
+      "rank": 5
+    }
+  ],
+  "total_teams": 96,
+  "total_leagues": 5,
+  "leagues": [
+    "Premier League",
+    "Serie A",
+    "Bundesliga",
+    "La Liga",
+    "Ligue 1"
+  ],
+  "timestamp": "2025-09-24T09:16:43.198494"
+}
