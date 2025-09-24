@@ -997,24 +997,37 @@ const autoAddToFavorites = async (query: string, extractedFilters?: ApiResponse[
   
   if (leagueToAdd) {
     const matchedLeague = leagueToAdd;
-      const existingLeagues = JSON.parse(localStorage.getItem('favLeagues') || '[]');
-      const leagueId = matchedLeague.toLowerCase().replace(/\s+/g, '-');
-      const exists = existingLeagues.some((l: any) => l.id === leagueId);
+    const existingLeagues = JSON.parse(localStorage.getItem('favLeagues') || '[]');
+    
+    // Create proper league mapping to match FavoriteLeaguesDrawer IDs
+    const leagueMapping: { [key: string]: { id: string, country: string, emoji: string } } = {
+      'Premier League': { id: 'epl', country: 'England', emoji: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
+      'La Liga': { id: 'laliga', country: 'Spain', emoji: '🇪🇸' },
+      'Serie A': { id: 'seriea', country: 'Italy', emoji: '🇮🇹' },
+      'Bundesliga': { id: 'bundesliga', country: 'Germany', emoji: '🇩🇪' },
+      'Ligue 1': { id: 'ligue1', country: 'France', emoji: '🇫🇷' },
+      'UEFA Champions League': { id: 'ucl', country: 'Europe', emoji: '🏆' },
+      'UEFA Europa League': { id: 'uel', country: 'Europe', emoji: '🏆' }
+    };
+    
+    const leagueInfo = leagueMapping[matchedLeague];
+    const leagueId = leagueInfo?.id || matchedLeague.toLowerCase().replace(/\s+/g, '-');
+    const exists = existingLeagues.some((l: any) => l.id === leagueId);
+    
+    if (!exists) {
+      const newLeague = {
+        id: leagueId,
+        name: matchedLeague,
+        country: leagueInfo?.country || "Europe",
+        emoji: leagueInfo?.emoji || "🏆"
+      };
       
-      if (!exists) {
-        const newLeague = {
-          id: leagueId,
-          name: matchedLeague,
-          country: "Europe", // Default, could be enhanced
-          emoji: "🏆"
-        };
-        
-        const updatedLeagues = [...existingLeagues, newLeague];
-        localStorage.setItem('favLeagues', JSON.stringify(updatedLeagues));
-        window.dispatchEvent(new CustomEvent("fav:leagues:updated"));
-        
-        console.log(`Auto-added league to favorites: ${matchedLeague}`);
-      }
+      const updatedLeagues = [...existingLeagues, newLeague];
+      localStorage.setItem('favLeagues', JSON.stringify(updatedLeagues));
+      window.dispatchEvent(new CustomEvent("fav:leagues:updated"));
+      
+      console.log(`Auto-added league to favorites: ${matchedLeague}`);
+    }
   }
 };
 
