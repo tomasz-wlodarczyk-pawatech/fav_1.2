@@ -130,7 +130,7 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
         role="dialog"
         aria-modal="true"
       >
-        <div className="mx-auto w-full max-w-md bg-white rounded-t-2xl shadow-2xl">
+        <div className="mx-auto w-full max-w-full bg-white rounded-t-2xl shadow-2xl">
           {/* Handle */}
           <div className="flex items-center justify-center pt-2">
             <div className="h-1.5 w-12 rounded-full bg-gray-200" />
