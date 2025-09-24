@@ -217,20 +217,6 @@ export function FavoriteTeamsDrawer({ isOpen, onClose, onSave, initialSelectedTe
   }, [isOpen]);
 
   if (!isOpen) return null;
-  
-  // Show loading state
-  if (isLoading) {
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-        <div className="bg-white rounded-2xl p-6 max-w-sm mx-4">
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
-            <span className="text-gray-700">Loading teams...</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   const filteredTeams = teamsData.filter(team => {
     const matchesSearch = team.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -350,9 +336,17 @@ export function FavoriteTeamsDrawer({ isOpen, onClose, onSave, initialSelectedTe
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
-          {popularTeams.length > 0 && (
-            <div className="p-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">Popular Teams</h3>
+          {/* Popular Teams Section */}
+          <div className="p-4">
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">Popular Teams</h3>
+            {isLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+                  <span className="text-sm text-gray-600">Loading popular teams...</span>
+                </div>
+              </div>
+            ) : popularTeams.length > 0 ? (
               <div className="space-y-2">
                 {popularTeams.map((team) => (
                   <TeamItem
@@ -364,14 +358,24 @@ export function FavoriteTeamsDrawer({ isOpen, onClose, onSave, initialSelectedTe
                   />
                 ))}
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="py-4 text-center">
+                <p className="text-sm text-gray-500">No popular teams available</p>
+              </div>
+            )}
+          </div>
 
-          {sortedLeagues.length > 0 && (
-            <div className="p-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">
-                {popularTeams.length > 0 ? "All Teams by League" : "Teams by League"}
-              </h3>
+          {/* All Teams by League Section */}
+          <div className="p-4">
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">All Teams by League</h3>
+            {isLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+                  <span className="text-sm text-gray-600">Loading teams by league...</span>
+                </div>
+              </div>
+            ) : sortedLeagues.length > 0 ? (
               <div className="space-y-4">
                 {sortedLeagues.map((league) => (
                   <div key={league}>
@@ -392,18 +396,20 @@ export function FavoriteTeamsDrawer({ isOpen, onClose, onSave, initialSelectedTe
                   </div>
                 ))}
               </div>
-            </div>
-          )}
-
-          {filteredTeams.length === 0 && (
-            <div className="p-8 text-center">
-              <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Search className="h-6 w-6 text-gray-400" />
+            ) : !isLoading && filteredTeams.length === 0 ? (
+              <div className="p-8 text-center">
+                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Search className="h-6 w-6 text-gray-400" />
+                </div>
+                <h3 className="text-sm font-medium text-gray-900 mb-1">No teams found</h3>
+                <p className="text-xs text-gray-600">Try adjusting your search or filter</p>
               </div>
-              <h3 className="text-sm font-medium text-gray-900 mb-1">No teams found</h3>
-              <p className="text-xs text-gray-600">Try adjusting your search or filter</p>
-            </div>
-          )}
+            ) : (
+              <div className="py-4 text-center">
+                <p className="text-sm text-gray-500">No teams available by league</p>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Footer */}
