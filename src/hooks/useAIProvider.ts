@@ -905,27 +905,52 @@ const autoAddToFavorites = async (query: string, extractedFilters?: ApiResponse[
       const cleanedQuery = lowerQuery.replace(/\b(i\s+like|love|follow|support|favorite|favourite)\s+/i, '').trim();
       for (const team of allTeams) {
         const teamLower = team.name.toLowerCase();
-        // Enhanced matching: exact, partial, and keyword matches
-        if (lowerQuery.includes(teamLower) || 
-            teamLower.includes(cleanedQuery) ||
-            cleanedQuery.includes(teamLower) ||
-            // Handle cases like "Juventus" matching "Juventus Turin"
-            teamLower.split(' ').some(word => cleanedQuery.includes(word) && word.length > 3) ||
-            cleanedQuery.split(' ').some(word => teamLower.includes(word) && word.length > 3)) {
+        // More precise matching for favorite declarations
+        if (cleanedQuery.includes(teamLower) || 
+            (teamLower.includes(cleanedQuery) && cleanedQuery.length > 3)) {
           foundTeams.push(team);
         }
       }
     }
     
-    // Also check for direct team mentions with enhanced matching
+    // Check for direct team mentions - more precise matching
     for (const team of allTeams) {
       const teamLower = team.name.toLowerCase();
-      if (lowerQuery.includes(teamLower) ||
-          teamLower.includes(lowerQuery) ||
-          // Handle partial matches like "juventus" → "juventus turin"
-          teamLower.split(' ').some(word => lowerQuery.includes(word) && word.length > 3) ||
-          lowerQuery.split(' ').some(word => teamLower.includes(word) && word.length > 3)) {
+      
+      // Exact match or the query contains the full team name
+      if (lowerQuery.includes(teamLower)) {
         foundTeams.push(team);
+        continue;
+      }
+      
+      // Handle common abbreviations and nicknames
+      const commonMappings: { [key: string]: string[] } = {
+        'man city': ['manchester city'],
+        'man utd': ['manchester united'],
+        'man united': ['manchester united'],
+        'liverpool': ['liverpool fc'],
+        'arsenal': ['arsenal fc'],
+        'chelsea': ['chelsea fc'],
+        'tottenham': ['tottenham hotspur'],
+        'spurs': ['tottenham hotspur'],
+        'everton': ['everton fc'],
+        'west ham': ['west ham united'],
+        'psg': ['paris saint-germain'],
+        'barca': ['fc barcelona'],
+        'real madrid': ['real madrid'],
+        'juventus': ['juventus fc'],
+        'milan': ['ac milan'],
+        'inter': ['inter milan'],
+        'bayern': ['bayern munich'],
+        'dortmund': ['borussia dortmund']
+      };
+      
+      // Check if query contains any mapped abbreviation
+      for (const [abbrev, fullNames] of Object.entries(commonMappings)) {
+        if (lowerQuery.includes(abbrev) && fullNames.some(name => teamLower.includes(name))) {
+          foundTeams.push(team);
+          break;
+        }
       }
     }
     
