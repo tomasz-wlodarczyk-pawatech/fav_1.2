@@ -392,152 +392,266 @@ const MOCK_DATA: Record<string, ApiResponse> = {
     ]
   },
   "I love Serie A and Premier League and betting on 1x2 and OU markets": {
-    query: "I love Serie A and Premier League and betting on 1x2 and OU markets",
-    user_id: "aag",
-    extracted_filters: {
-      teams: [],
-      market_types: ["1x2", "over/under"],
-      min_odds: null,
-      max_odds: null,
-      date_from: null,
-      date_to: null,
-      league: null
+  "query": "I love Serie A and Premier League and betting on 1x2 and OU markets",
+  "user_id": "aag",
+  "extracted_filters": {
+    "teams": [],
+    "market_types": [
+      "1X2",
+      "over/under"
+    ],
+    "min_odds": null,
+    "max_odds": null,
+    "date_from": null,
+    "date_to": null,
+    "league": "Multi-League"
+  },
+  "matches": [
+    {
+      "home_team": "Como 1907",
+      "away_team": "US Cremonese",
+      "match_date": "2025-09-27T13:00:00Z",
+      "league": "Serie A",
+      "relevance": 1,
+      "markets": {
+        "1X2 | Full Time": {
+          "1": 1.49,
+          "2": 6.5,
+          "X": 4.35
+        },
+        "Over/Under | Full Time": {
+          "Over 0.5": 1.04,
+          "Under 0.5": 11,
+          "Over 1.5": 1.29,
+          "Under 1.5": 3.65,
+          "Over 2.5": 1.89,
+          "Under 2.5": 1.9,
+          "Over 3.5": 3.25,
+          "Under 3.5": 1.34,
+          "Over 4.5": 6.25,
+          "Under 4.5": 1.12,
+          "Over 5.5": 13,
+          "Under 5.5": 1.02
+        }
+      },
+      "odds": {
+        "1": 1.49,
+        "2": 6.5,
+        "X": 4.35
+      },
+      "event_id": "29752834",
+      "competition": "Football - Italy - Serie A"
     },
-    matches: [
-      {
-        home_team: "AC Milan",
-        away_team: "Juventus FC",
-        match_date: "2025-09-29T18:45:00Z",
-        league: "Serie A",
-        relevance: 1,
-        markets: {
-          "1X2 | Full Time": {
-            "1": 2.45,
-            "X": 3.25,
-            "2": 2.85
-          },
-          "Over/Under | Full Time": {
-            "Over 0.5": 1.08,
-            "Under 0.5": 7.50,
-            "Over 1.5": 1.38,
-            "Under 1.5": 2.95,
-            "Over 2.5": 2.12,
-            "Under 2.5": 1.72,
-            "Over 3.5": 3.45,
-            "Under 3.5": 1.31,
-            "Over 4.5": 6.25,
-            "Under 4.5": 1.13
-          }
-        },
-        odds: {
-          "1": 2.45,
-          "X": 3.25,
-          "2": 2.85
-        },
-        event_id: "30145632",
-        competition: "Football - Italy - Serie A"
-      },
-      {
-        home_team: "Manchester United",
-        away_team: "Tottenham Hotspur",
-        match_date: "2025-09-29T16:30:00Z",
-        league: "Premier League",
-        relevance: 1,
-        markets: {
-          "1X2 | Full Time": {
-            "1": 2.15,
-            "X": 3.45,
-            "2": 3.20
-          },
-          "Over/Under | Full Time": {
-            "Over 0.5": 1.05,
-            "Under 0.5": 9.00,
-            "Over 1.5": 1.32,
-            "Under 1.5": 3.15,
-            "Over 2.5": 1.95,
-            "Under 2.5": 1.82,
-            "Over 3.5": 3.25,
-            "Under 3.5": 1.34,
-            "Over 4.5": 5.85,
-            "Under 4.5": 1.14
-          }
-        },
-        odds: {
-          "1": 2.15,
-          "X": 3.45,
-          "2": 3.20
-        },
-        event_id: "30089764",
-        competition: "Football - England - Premier League"
-      },
-      {
-        home_team: "Inter Milan",
-        away_team: "AS Roma",
-        match_date: "2025-10-02T19:00:00Z",
-        league: "Serie A",
-        relevance: 1,
-        markets: {
-          "1X2 | Full Time": {
-            "1": 1.85,
-            "X": 3.65,
-            "2": 4.15
-          },
-          "Over/Under | Full Time": {
-            "Over 0.5": 1.06,
-            "Under 0.5": 8.25,
-            "Over 1.5": 1.35,
-            "Under 1.5": 3.05,
-            "Over 2.5": 2.05,
-            "Under 2.5": 1.75,
-            "Over 3.5": 3.55,
-            "Under 3.5": 1.29,
-            "Over 4.5": 6.50,
-            "Under 4.5": 1.11
-          }
-        },
-        odds: {
+    {
+      "home_team": "Juventus Turin",
+      "away_team": "Atalanta BC",
+      "match_date": "2025-09-27T16:00:00Z",
+      "league": "Serie A",
+      "relevance": 1,
+      "markets": {
+        "1X2 | Full Time": {
           "1": 1.85,
-          "X": 3.65,
-          "2": 4.15
+          "2": 4.25,
+          "X": 3.65
         },
-        event_id: "30145789",
-        competition: "Football - Italy - Serie A"
+        "Over/Under | Full Time": {
+          "Over 0.5": 1.05,
+          "Under 0.5": 9.5,
+          "Over 1.5": 1.32,
+          "Under 1.5": 3.35,
+          "Over 2.5": 2.01,
+          "Under 2.5": 1.8,
+          "Over 3.5": 3.55,
+          "Under 3.5": 1.29,
+          "Over 4.5": 7.25,
+          "Under 4.5": 1.09,
+          "Over 5.5": 14,
+          "Under 5.5": 1.02
+        }
       },
-      {
-        home_team: "Brighton & Hove Albion",
-        away_team: "Newcastle United",
-        match_date: "2025-10-03T14:00:00Z",
-        league: "Premier League",
-        relevance: 1,
-        markets: {
-          "1X2 | Full Time": {
-            "1": 2.65,
-            "X": 3.15,
-            "2": 2.75
-          },
-          "Over/Under | Full Time": {
-            "Over 0.5": 1.07,
-            "Under 0.5": 7.75,
-            "Over 1.5": 1.42,
-            "Under 1.5": 2.85,
-            "Over 2.5": 2.25,
-            "Under 2.5": 1.65,
-            "Over 3.5": 3.85,
-            "Under 3.5": 1.26,
-            "Over 4.5": 7.25,
-            "Under 4.5": 1.09
-          }
+      "odds": {
+        "1": 1.85,
+        "2": 4.25,
+        "X": 3.65
+      },
+      "event_id": "29752849",
+      "competition": "Football - Italy - Serie A"
+    },
+    {
+      "home_team": "Cagliari Calcio",
+      "away_team": "Inter Milano",
+      "match_date": "2025-09-27T18:45:00Z",
+      "league": "Serie A",
+      "relevance": 1,
+      "markets": {
+        "1X2 | Full Time": {
+          "1": 5.5,
+          "2": 1.6,
+          "X": 4.15
         },
-        odds: {
-          "1": 2.65,
-          "X": 3.15,
-          "2": 2.75
+        "Over/Under | Full Time": {
+          "Over 0.5": 1.04,
+          "Under 0.5": 11,
+          "Over 1.5": 1.25,
+          "Under 1.5": 3.95,
+          "Over 2.5": 1.8,
+          "Under 2.5": 2.01,
+          "Over 3.5": 3,
+          "Under 3.5": 1.4,
+          "Over 4.5": 5.75,
+          "Under 4.5": 1.14,
+          "Over 5.5": 11,
+          "Under 5.5": 1.04
+        }
+      },
+      "odds": {
+        "1": 5.5,
+        "2": 1.6,
+        "X": 4.15
+      },
+      "event_id": "29752845",
+      "competition": "Football - Italy - Serie A"
+    },
+    {
+      "home_team": "Brentford FC",
+      "away_team": "Manchester United",
+      "match_date": "2025-09-27T11:30:00Z",
+      "league": "Premier League",
+      "relevance": 1,
+      "markets": {
+        "1X2 | Full Time": {
+          "1": 3.4,
+          "2": 2.02,
+          "X": 3.8
         },
-        event_id: "30089821",
-        competition: "Football - England - Premier League"
-      }
-    ]
-  }
+        "Over/Under | Full Time": {
+          "Over 0.5": 1.02,
+          "Under 0.5": 13,
+          "Over 1.5": 1.2,
+          "Under 1.5": 4.55,
+          "Over 2.5": 1.66,
+          "Under 2.5": 2.22,
+          "Over 3.5": 2.6,
+          "Under 3.5": 1.49,
+          "Over 4.5": 4.75,
+          "Under 4.5": 1.19,
+          "Over 5.5": 9.25,
+          "Under 5.5": 1.06
+        }
+      },
+      "odds": {
+        "1": 3.4,
+        "2": 2.02,
+        "X": 3.8
+      },
+      "event_id": "29845812",
+      "competition": "Football - England - Premier League"
+    },
+    {
+      "home_team": "Chelsea FC",
+      "away_team": "Brighton & Hove Albion",
+      "match_date": "2025-09-27T14:00:00Z",
+      "league": "Premier League",
+      "relevance": 1,
+      "markets": {
+        "1X2 | Full Time": {
+          "1": 1.78,
+          "2": 4.15,
+          "X": 4.05
+        },
+        "Over/Under | Full Time": {
+          "Over 0.5": 1.02,
+          "Under 0.5": 14,
+          "Over 1.5": 1.18,
+          "Under 1.5": 4.85,
+          "Over 2.5": 1.6,
+          "Under 2.5": 2.35,
+          "Over 3.5": 2.5,
+          "Under 3.5": 1.54,
+          "Over 4.5": 4.45,
+          "Under 4.5": 1.21,
+          "Over 5.5": 8.25,
+          "Under 5.5": 1.07
+        }
+      },
+      "odds": {
+        "1": 1.78,
+        "2": 4.15,
+        "X": 4.05
+      },
+      "event_id": "29845541",
+      "competition": "Football - England - Premier League"
+    },
+    {
+      "home_team": "Crystal Palace",
+      "away_team": "Liverpool FC",
+      "match_date": "2025-09-27T14:00:00Z",
+      "league": "Premier League",
+      "relevance": 1,
+      "markets": {
+        "1X2 | Full Time": {
+          "1": 4.05,
+          "2": 1.81,
+          "X": 3.95
+        },
+        "Over/Under | Full Time": {
+          "Over 0.5": 1.03,
+          "Under 0.5": 12,
+          "Over 1.5": 1.22,
+          "Under 1.5": 4.25,
+          "Over 2.5": 1.72,
+          "Under 2.5": 2.12,
+          "Over 3.5": 2.8,
+          "Under 3.5": 1.44,
+          "Over 4.5": 5.25,
+          "Under 4.5": 1.16,
+          "Over 5.5": 10,
+          "Under 5.5": 1.05
+        }
+      },
+      "odds": {
+        "1": 4.05,
+        "2": 1.81,
+        "X": 3.95
+      },
+      "event_id": "29846196",
+      "competition": "Football - England - Premier League"
+    },
+    {
+      "home_team": "Manchester City",
+      "away_team": "Burnley FC",
+      "match_date": "2025-09-27T14:00:00Z",
+      "league": "Premier League",
+      "relevance": 1,
+      "markets": {
+        "1X2 | Full Time": {
+          "1": 1.15,
+          "2": 15.5,
+          "X": 8
+        },
+        "Over/Under | Full Time": {
+          "Over 1.5": 1.13,
+          "Under 1.5": 6,
+          "Over 2.5": 1.43,
+          "Under 2.5": 2.8,
+          "Over 3.5": 2.09,
+          "Under 3.5": 1.74,
+          "Over 4.5": 3.5,
+          "Under 4.5": 1.31,
+          "Over 5.5": 6.25,
+          "Under 5.5": 1.12
+        }
+      },
+      "odds": {
+        "1": 1.15,
+        "2": 15.5,
+        "X": 8
+      },
+      "event_id": "29846177",
+      "competition": "Football - England - Premier League"
+    }
+  ]
+}
 };
 
 export type MarketKind = "1x2" | "ou" | "btts" | "dc" | "htft";
