@@ -16,60 +16,29 @@ type Props = {
 export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
   const [q, setQ] = useState(initialQuery);
   const [mounted, setMounted] = useState(false);
+  const [hasSearchExecuted, setHasSearchExecuted] = useState(false);
   const [results, setResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { search } = useAIProvider();
   const navigate = useNavigate();
 
+  // Set initial query when drawer opens
   useEffect(() => {
-    setQ(initialQuery);
-    // Trigger search immediately when drawer opens with a query
-    if (isOpen && initialQuery.trim() && initialQuery.trim().length >= 2) {
-      // Check if query contains "favorite"/"favourite" first - instant response
-      if (/\b(favorite|favourite)\b/i.test(initialQuery.trim())) {
-        console.log("🎯 Query contains 'favorite' - executing search and navigating after 1 second");
-        
-        // Execute search immediately but navigate after 1 second delay
-        search(initialQuery.trim()).then(() => {
-          setTimeout(() => {
-            onClose(); // Close the modal
-            navigate('/favorites'); // Navigate to favorites
-          }, 1000); // 1 second delay
-        }).catch(() => {
-          setTimeout(() => {
-            onClose();
-            navigate('/favorites');
-          }, 1000); // 1 second delay
-        });
-        return;
-      }
-      
-      setIsLoading(true);
-      setError(null);
-      setResults([]);
-      
-      const timeoutId = setTimeout(async () => {
-        try {
-          const searchResults = await search(initialQuery.trim());
-          setResults(searchResults);
-        } catch (err) {
-          setError(err instanceof Error ? err.message : "Search failed");
-          setResults([]);
-        } finally {
-          setIsLoading(false);
-        }
-      }, 100); // Short delay to show loading
-      
-      return () => clearTimeout(timeoutId);
+    if (isOpen && initialQuery !== q) {
+      setQ(initialQuery);
+      setHasSearchExecuted(false); // Reset execution flag
     }
-  }, [initialQuery, isOpen, search, onClose, navigate]);
+  }, [initialQuery, isOpen, q]);
   
   useEffect(() => { if (isOpen) setMounted(true); }, [isOpen]);
 
-  // Close on ESC
+  // Close on ESC and reset search execution when drawer closes
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      setHasSearchExecuted(false); // Reset when drawer closes
+      return;
+    }
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -85,17 +54,25 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
     }
   }, [isOpen]);
 
-  // Debounced search effect
+  // Unified search effect 
   useEffect(() => {
+    if (!isOpen) return;
+    
     if (!q.trim() || q.trim().length < 2) {
       setResults([]);
       setError(null);
       return;
     }
 
-    // Check if query contains "favorite"/"favourite" first - instant response
+    // For initial query (from outside), execute immediately once
+    const isInitialQuery = initialQuery && initialQuery === q && !hasSearchExecuted;
+    
+    // Check if query contains "favorite"/"favourite" - instant response
     if (/\b(favorite|favourite)\b/i.test(q.trim())) {
+      if (hasSearchExecuted) return; // Prevent re-execution
+      
       console.log("🎯 Query contains 'favorite' - executing search and navigating after 1 second");
+      setHasSearchExecuted(true);
       
       // Execute search immediately without debounce for favorites
       setIsLoading(true);
@@ -115,10 +92,14 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
       return;
     }
 
+    const delay = isInitialQuery ? 100 : 500; // Fast for initial, debounced for typing
+    if (isInitialQuery) setHasSearchExecuted(true);
+
     const timeoutId = setTimeout(async () => {
       setIsLoading(true);
       setError(null);
-      setResults([]); // Clear previous results when starting new search
+      setResults([]);
+      
       try {
         const searchResults = await search(q.trim());
         setResults(searchResults);
@@ -128,10 +109,10 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
       } finally {
         setIsLoading(false);
       }
-    }, 500); // 500ms debounce
+    }, delay);
 
     return () => clearTimeout(timeoutId);
-  }, [q, search, onClose, navigate]);
+  }, [q, search, onClose, navigate, isOpen, initialQuery, hasSearchExecuted]);
 
   if (!mounted) return null;
 

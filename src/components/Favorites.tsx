@@ -357,6 +357,8 @@ export function Favorites({
                     e.preventDefault();
                     setIsAISearchOpen(true);
                   }
+                  // Don't block other events
+                  e.stopPropagation();
                 }}
                 rows={3} // visible rows; users can still type longer
                 placeholder="Type what you want to find… e.g. 'I love betting Man City BTTS with odds over 1.8'"
