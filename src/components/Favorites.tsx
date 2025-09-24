@@ -7,8 +7,6 @@ import { MatchCard } from "./MatchCard";
 import MarketMatchCard from "./MarketMatchCard";
 import { FavoriteTeamsDrawer } from "./FavoriteTeamsDrawer";
 import { FavoriteLeaguesDrawer } from "./FavoriteLeaguesDrawer";
-import { FavoritesSelectionDrawer } from "./FavoritesSelectionDrawer";
-import { EventFavoritesDrawer } from "./EventFavoritesDrawer";
 import { getSportsMatchData } from "./SportsMatchData";
 import { searchResultsStore } from "../lib/searchResultsStore";
 import { favoritesStore } from "../lib/favoritesStore";
@@ -97,8 +95,6 @@ export function Favorites({
   const [isTeamsDrawerOpen, setIsTeamsDrawerOpen] = useState(false);
   const [isLeaguesDrawerOpen, setIsLeaguesDrawerOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isFavoritesSelectionOpen, setIsFavoritesSelectionOpen] = useState(false);
-  const [isEventFavoritesOpen, setIsEventFavoritesOpen] = useState(false);
 
   // Get favorite teams and leagues data from localStorage
   const [favTeamsData, setFavTeamsData] = useState<FavTeam[]>([]);
@@ -438,7 +434,6 @@ export function Favorites({
                     description="Star your favorite matches to see them here for quick access."
                     type="sports"
                     onNavigateToSport={goToSport}
-                    onAddFavorites={() => setIsFavoritesSelectionOpen(true)}
                   />
                 ) : (
                   <div className="space-y-3">
@@ -601,46 +596,19 @@ export function Favorites({
         initialQuery={aiQuery}
         onClose={() => setIsAISearchOpen(false)}
       />
-      
-      <FavoritesSelectionDrawer
-        isOpen={isFavoritesSelectionOpen}
-        onClose={() => setIsFavoritesSelectionOpen(false)}
-        onManageTeams={() => {
-          setIsFavoritesSelectionOpen(false);
-          setIsTeamsDrawerOpen(true);
-        }}
-        onManageLeagues={() => {
-          setIsFavoritesSelectionOpen(false);
-          setIsLeaguesDrawerOpen(true);
-        }}
-        onManageEvents={() => {
-          setIsFavoritesSelectionOpen(false);
-          setIsEventFavoritesOpen(true);
-        }}
-      />
-      
-      <EventFavoritesDrawer
-        isOpen={isEventFavoritesOpen}
-        onClose={() => setIsEventFavoritesOpen(false)}
-        onSave={() => {
-          // Refresh the page data to show new favorites
-          setTick(t => t + 1);
-        }}
-      />
     </div>
   );
 }
 
 // Empty state component
 function EmptyState({
-  icon, title, description, type, onNavigateToSport, onAddFavorites
+  icon, title, description, type, onNavigateToSport
 }: {
   icon: React.ReactNode,
   title: string,
   description: string,
   type: 'sports' | 'casino' | 'apps',
-  onNavigateToSport?: (sportId: 'football' | 'basketball' | 'efootball' | 'tennis') => void,
-  onAddFavorites?: () => void
+  onNavigateToSport?: (sportId: 'football' | 'basketball' | 'efootball' | 'tennis') => void
 }) {
   const getSuggestions = () => {
     switch (type) {
@@ -668,17 +636,7 @@ function EmptyState({
         {icon}
       </div>
       <h2 className="text-lg font-semibold text-gray-900 mb-2">{title}</h2>
-      <p className="text-sm text-gray-600 mb-4 max-w-sm mx-auto">{description}</p>
-      
-      {/* Add Favorites Button */}
-      {type === 'sports' && onAddFavorites && (
-        <button
-          onClick={onAddFavorites}
-          className="inline-flex items-center justify-center px-6 py-2.5 mb-6 bg-[#9ce800] text-black text-sm font-medium rounded-lg hover:bg-[#8bc700] focus:outline-none focus:ring-2 focus:ring-[#9ce800] focus:ring-offset-2 transition-colors"
-        >
-          Add favorites
-        </button>
-      )}
+      <p className="text-sm text-gray-600 mb-6 max-w-sm mx-auto">{description}</p>
 
       {type === 'sports' ? (
         <div className="space-y-2">
