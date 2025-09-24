@@ -190,7 +190,7 @@ export default function HomeFavoritesWidget() {
       <div>
         {activeTab === "events" && (
           <>
-            <div className="space-y-4">
+            <div>
               {/* Market Favorites Section */}
               {favMarketItems.length > 0 && (
                 <div>
@@ -206,7 +206,7 @@ export default function HomeFavoritesWidget() {
               
               {/* Legacy Match Favorites */}
               {favoriteEvents.length > 0 && (
-                <div>
+                <div className="mt-4">
                   {favMarketItems.length > 0 && (
                     <h4 className="text-xs font-medium text-gray-600 mb-2 uppercase tracking-wide">Favorite Events</h4>
                   )}
@@ -220,11 +220,13 @@ export default function HomeFavoritesWidget() {
               
               {/* Empty state */}
               {favoriteEvents.length === 0 && favMarketItems.length === 0 && (
+                <div className="mt-4">
                 <EmptyMini
                   icon={<Trophy className="w-5 h-5 text-gray-500" />}
                   title="No sports favorites yet"
                   onClick={() => navigate('/sports')}
                 />
+                </div>
               )}
             </div>
           </>
