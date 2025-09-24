@@ -88,17 +88,8 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
           </div>
 
           {/* Header */}
-          <div className="flex items-center gap-2 px-4 py-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                autoFocus
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder="Try: Arsenal over 2.5 goals, Liverpool BTTS, Premier League 1X2..."
-                className="w-full h-10 pl-9 pr-3 rounded-xl border border-gray-200 bg-white text-sm outline-none focus:ring-2 focus:ring-black/10"
-              />
-            </div>
+          <div className="flex items-center justify-between px-4 py-3">
+            <h3 className="text-lg font-semibold text-gray-900">Search Results</h3>
             <button
               className="w-8 h-8 rounded-lg border border-gray-200 bg-white text-gray-600 flex items-center justify-center hover:bg-gray-50 active:bg-gray-100"
               onClick={onClose}
