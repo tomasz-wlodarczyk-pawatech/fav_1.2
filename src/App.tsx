@@ -4,7 +4,7 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { Home } from "./components/Home";
 import { MyBets } from "./components/MyBets";
 import { Favorites } from "./components/Favorites";
@@ -52,6 +52,42 @@ function AppContent() {
   const [favoriteLeagues, setFavoriteLeagues] = useState<
     string[]
   >([]);
+
+  // Load initial favorites from localStorage and set up listeners
+  useEffect(() => {
+    const loadFavorites = () => {
+      try {
+        // Load teams - convert from stored format to IDs
+        const storedTeams = JSON.parse(localStorage.getItem('favTeams') || '[]');
+        const teamIds = storedTeams.map((team: any) => team.id || team.name?.toLowerCase().replace(/\s+/g, '-'));
+        setFavoriteTeams(teamIds.filter(Boolean));
+        
+        // Load leagues - convert from stored format to IDs  
+        const storedLeagues = JSON.parse(localStorage.getItem('favLeagues') || '[]');
+        const leagueIds = storedLeagues.map((league: any) => league.id || league.name?.toLowerCase().replace(/\s+/g, '-'));
+        setFavoriteLeagues(leagueIds.filter(Boolean));
+      } catch (error) {
+        console.error('Error loading favorites:', error);
+        setFavoriteTeams([]);
+        setFavoriteLeagues([]);
+      }
+    };
+
+    // Load initial data
+    loadFavorites();
+
+    // Listen for updates
+    const handleTeamsUpdate = () => loadFavorites();
+    const handleLeaguesUpdate = () => loadFavorites();
+    
+    window.addEventListener('fav:teams:updated', handleTeamsUpdate);
+    window.addEventListener('fav:leagues:updated', handleLeaguesUpdate);
+    
+    return () => {
+      window.removeEventListener('fav:teams:updated', handleTeamsUpdate);
+      window.removeEventListener('fav:leagues:updated', handleLeaguesUpdate);
+    };
+  }, []);
 
   // Map URLs to page names for navigation - memoized to prevent re-render loops
   const activeItem = useMemo(() => {
