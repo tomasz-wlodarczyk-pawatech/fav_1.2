@@ -894,62 +894,53 @@ const autoAddToFavorites = async (query: string, extractedFilters?: ApiResponse[
     return null;
   };
   
-  // Enhanced direct team recognition from query text
-  const directTeamCheck = (queryText: string) => {
+  // Check for teams that should be added to favorites (explicit love/like/favorite expressions)
+  const favoriteTeamCheck = (queryText: string) => {
     if (!queryText || typeof queryText !== 'string') return [];
     const lowerQuery = queryText.toLowerCase();
     const foundTeams: any[] = [];
     
-    // Check for "I like [team]" or similar phrases
-    if (/\b(i\s+like|love|follow|support|favorite|favourite)\b/i.test(lowerQuery)) {
-      const cleanedQuery = lowerQuery.replace(/\b(i\s+like|love|follow|support|favorite|favourite)\s+/i, '').trim();
+    // Only add to favorites when user explicitly expresses preference
+    if (/\b(i\s+like|love|follow|support|favorite|favourite|add.*to.*favorite|want.*to.*favorite)\b/i.test(lowerQuery)) {
+      const cleanedQuery = lowerQuery.replace(/\b(i\s+like|love|follow|support|favorite|favourite|add.*to.*favorite|want.*to.*favorite)\s+/gi, '').trim();
+      
       for (const team of allTeams) {
         const teamLower = team.name.toLowerCase();
-        // More precise matching for favorite declarations
-        if (cleanedQuery.includes(teamLower) || 
-            (teamLower.includes(cleanedQuery) && cleanedQuery.length > 3)) {
+        
+        // Exact match or the query contains the full team name
+        if (cleanedQuery.includes(teamLower)) {
           foundTeams.push(team);
+          continue;
         }
-      }
-    }
-    
-    // Check for direct team mentions - more precise matching
-    for (const team of allTeams) {
-      const teamLower = team.name.toLowerCase();
-      
-      // Exact match or the query contains the full team name
-      if (lowerQuery.includes(teamLower)) {
-        foundTeams.push(team);
-        continue;
-      }
-      
-      // Handle common abbreviations and nicknames
-      const commonMappings: { [key: string]: string[] } = {
-        'man city': ['manchester city'],
-        'man utd': ['manchester united'],
-        'man united': ['manchester united'],
-        'liverpool': ['liverpool fc'],
-        'arsenal': ['arsenal fc'],
-        'chelsea': ['chelsea fc'],
-        'tottenham': ['tottenham hotspur'],
-        'spurs': ['tottenham hotspur'],
-        'everton': ['everton fc'],
-        'west ham': ['west ham united'],
-        'psg': ['paris saint-germain'],
-        'barca': ['fc barcelona'],
-        'real madrid': ['real madrid'],
-        'juventus': ['juventus fc'],
-        'milan': ['ac milan'],
-        'inter': ['inter milan'],
-        'bayern': ['bayern munich'],
-        'dortmund': ['borussia dortmund']
-      };
-      
-      // Check if query contains any mapped abbreviation
-      for (const [abbrev, fullNames] of Object.entries(commonMappings)) {
-        if (lowerQuery.includes(abbrev) && fullNames.some(name => teamLower.includes(name))) {
-          foundTeams.push(team);
-          break;
+        
+        // Handle common abbreviations and nicknames for favorites
+        const commonMappings: { [key: string]: string[] } = {
+          'man city': ['manchester city'],
+          'man utd': ['manchester united'],
+          'man united': ['manchester united'],
+          'liverpool': ['liverpool fc'],
+          'arsenal': ['arsenal fc'],
+          'chelsea': ['chelsea fc'],
+          'tottenham': ['tottenham hotspur'],
+          'spurs': ['tottenham hotspur'],
+          'everton': ['everton fc'],
+          'west ham': ['west ham united'],
+          'psg': ['paris saint-germain'],
+          'barca': ['fc barcelona'],
+          'real madrid': ['real madrid'],
+          'juventus': ['juventus fc'],
+          'milan': ['ac milan'],
+          'inter': ['inter milan'],
+          'bayern': ['bayern munich'],
+          'dortmund': ['borussia dortmund']
+        };
+        
+        // Check if query contains any mapped abbreviation
+        for (const [abbrev, fullNames] of Object.entries(commonMappings)) {
+          if (cleanedQuery.includes(abbrev) && fullNames.some(name => teamLower.includes(name))) {
+            foundTeams.push(team);
+            break;
+          }
         }
       }
     }
@@ -959,16 +950,10 @@ const autoAddToFavorites = async (query: string, extractedFilters?: ApiResponse[
   
   // Check for direct mentions in the query first
   const directLeague = directLeagueCheck(query);
-  const directTeams = directTeamCheck(query);
+  const favoriteTeams = favoriteTeamCheck(query);
   
-  // Auto-add directly mentioned teams or extracted teams
-  const teamsToProcess = directTeams.length > 0 ? directTeams : 
-    (extractedFilters?.teams || []).map(extractedTeam => {
-      return allTeams.find(team => 
-        team.name.toLowerCase().includes(extractedTeam.toLowerCase()) ||
-        extractedTeam.toLowerCase().includes(team.name.toLowerCase())
-      );
-    }).filter(Boolean);
+  // Auto-add only explicitly favorited teams (not general mentions)
+  const teamsToProcess = favoriteTeams;
   
   if (teamsToProcess.length > 0) {
     const recognizedTeams: any[] = [];
