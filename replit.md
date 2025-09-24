@@ -71,6 +71,14 @@ The application handles data through:
 - **TypeScript**: Static type checking
 - **Vite**: Build tool and development server
 
+## External APIs
+
+- **Teams API**: https://alluring-inspiration-production.up.railway.app/teams/all
+  - Provides real team data organized by league (Premier League, Serie A, Bundesliga, La Liga, Ligue 1)
+  - Returns popular teams ranking and comprehensive team lists
+  - Integrated with FavoriteTeamsDrawer for team selection
+  - Data includes 96 teams across 5 major European leagues
+
 ## UI Components
 
 - **Radix UI**: Complete suite of accessible React components including dialogs, dropdowns, tooltips, and form controls

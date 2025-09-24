@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Search, Heart, Check } from "lucide-react";
 
 const MAX_SELECTED = 5;
@@ -26,41 +26,199 @@ interface Team {
   isPopular?: boolean;
 }
 
-const teamsData: Team[] = [
-  // Football Teams
-  { id: "mu", name: "Manchester United", sport: "Football", league: "Premier League", logo: "🔴", isPopular: true },
-  { id: "mc", name: "Manchester City", sport: "Football", league: "Premier League", logo: "🔵", isPopular: true },
-  { id: "liv", name: "Liverpool", sport: "Football", league: "Premier League", logo: "🔴" },
-  { id: "che", name: "Chelsea", sport: "Football", league: "Premier League", logo: "🔵" },
-  { id: "ars", name: "Arsenal", sport: "Football", league: "Premier League", logo: "🔴" },
-  { id: "tot", name: "Tottenham", sport: "Football", league: "Premier League", logo: "⚪" },
-  { id: "rm", name: "Real Madrid", sport: "Football", league: "La Liga", logo: "⚪", isPopular: true },
-  { id: "fcb", name: "FC Barcelona", sport: "Football", league: "La Liga", logo: "🔵" },
-  { id: "psg", name: "Paris Saint-Germain", sport: "Football", league: "Ligue 1", logo: "🔵" },
-  { id: "bay", name: "Bayern Munich", sport: "Football", league: "Bundesliga", logo: "🔴" },
+// Team logos mapping
+const teamLogos: Record<string, string> = {
+  // Premier League
+  "AFC Bournemouth": "🍒",
+  "Arsenal FC": "🔴",
+  "Aston Villa": "🦁",
+  "Brentford FC": "🐝",
+  "Brighton & Hove Albion": "⚪",
+  "Burnley FC": "🔴",
+  "Chelsea FC": "🔵",
+  "Crystal Palace": "🦅",
+  "Everton FC": "🔵",
+  "Fulham FC": "⚪",
+  "Leeds United": "⚪",
+  "Liverpool FC": "🔴",
+  "Manchester City": "🔵",
+  "Manchester United": "🔴",
+  "Newcastle United": "⚫",
+  "Nottingham Forest": "🔴",
+  "Sunderland AFC": "🔴",
+  "Tottenham Hotspur": "⚪",
+  "West Ham United": "🔵",
+  "Wolverhampton Wanderers": "🟡",
   
-  // Basketball Teams
-  { id: "lal", name: "Los Angeles Lakers", sport: "Basketball", league: "NBA", logo: "💜", isPopular: true },
-  { id: "gsw", name: "Golden State Warriors", sport: "Basketball", league: "NBA", logo: "💛", isPopular: true },
-  { id: "bos", name: "Boston Celtics", sport: "Basketball", league: "NBA", logo: "💚" },
-  { id: "mia", name: "Miami Heat", sport: "Basketball", league: "NBA", logo: "🔴" },
-  { id: "brk", name: "Brooklyn Nets", sport: "Basketball", league: "NBA", logo: "⚫" },
-  { id: "phi", name: "Philadelphia 76ers", sport: "Basketball", league: "NBA", logo: "🔵" },
+  // Serie A
+  "AC Milan": "🔴",
+  "ACF Fiorentina": "🟣",
+  "AS Roma": "🔴",
+  "Atalanta BC": "🔵",
+  "Bologna FC": "🔴",
+  "Cagliari Calcio": "🔴",
+  "Como 1907": "🔵",
+  "Genoa CFC": "🔴",
+  "Hellas Verona": "🟡",
+  "Inter Milano": "🔵",
+  "Juventus Turin": "⚫",
+  "Lazio Rome": "🔵",
+  "Parma Calcio": "🟡",
+  "Pisa SC": "🔵",
+  "SSC Napoli": "🔵",
+  "Sassuolo Calcio": "🟢",
+  "Torino FC": "🔴",
+  "US Cremonese": "🔴",
+  "US Lecce": "🟡",
+  "Udinese Calcio": "⚫",
   
-  // Tennis Players (treated as teams)
-  { id: "djokovic", name: "Novak Djokovic", sport: "Tennis", league: "ATP", logo: "🎾" },
-  { id: "nadal", name: "Rafael Nadal", sport: "Tennis", league: "ATP", logo: "🎾" },
-  { id: "federer", name: "Roger Federer", sport: "Tennis", league: "ATP", logo: "🎾" }
-];
+  // Bundesliga
+  "1. FC Cologne": "🔴",
+  "1. FC Heidenheim": "🔴",
+  "Bayer Leverkusen": "🔴",
+  "Bayern Munich": "🔴",
+  "Borussia Dortmund": "🟡",
+  "Borussia Monchengladbach": "⚫",
+  "Eintracht Frankfurt": "🔴",
+  "FC Augsburg": "🔴",
+  "FC St. Pauli": "🤎",
+  "FSV Mainz": "🔴",
+  "Hamburger SV": "🔵",
+  "RB Leipzig": "🔴",
+  "SC Freiburg": "🔴",
+  "TSG Hoffenheim": "🔵",
+  "Union Berlin": "🔴",
+  "VfB Stuttgart": "⚪",
+  "VfL Wolfsburg": "🟢",
+  "Werder Bremen": "🟢",
+  
+  // La Liga
+  "Athletic Bilbao": "🔴",
+  "Atletico Madrid": "🔴",
+  "CA Osasuna": "🔴",
+  "Deportivo Alaves": "🔵",
+  "Elche CF": "🟢",
+  "Espanyol Barcelona": "🔵",
+  "FC Barcelona": "🔵",
+  "Getafe CF": "🔵",
+  "Girona FC": "🔴",
+  "Levante UD": "🔵",
+  "RC Celta de Vigo": "🔵",
+  "RCD Mallorca": "🔴",
+  "Rayo Vallecano": "⚪",
+  "Real Betis Seville": "🟢",
+  "Real Madrid": "⚪",
+  "Real Oviedo": "🔵",
+  "Real Sociedad San Sebastian": "🔵",
+  "Sevilla FC": "⚪",
+  "Valencia CF": "🔴",
+  "Villarreal CF": "🟡",
+  
+  // Ligue 1
+  "AJ Auxerre": "🔵",
+  "AS Monaco": "🔴",
+  "Angers SCO": "⚫",
+  "FC Lorient": "🟠",
+  "FC Metz": "🔴",
+  "FC Nantes": "🟡",
+  "Le Havre AC": "🔵",
+  "Lille OSC": "🔴",
+  "OGC Nice": "🔴",
+  "Olympique Lyon": "🔵",
+  "Olympique Marseille": "🔵",
+  "Paris FC": "🔵",
+  "Paris Saint-Germain": "🔵",
+  "RC Lens": "🟡",
+  "Stade Brest 29": "🔴",
+  "Stade Rennes": "🔴",
+  "Strasbourg Alsace": "🔵",
+  "Toulouse FC": "🟣"
+};
 
-const sports = ["All", "Football", "Basketball", "Tennis"];
+const sports = ["All", "Football"];
+
+interface ApiResponse {
+  all_teams_by_league: Record<string, string[]>;
+  most_popular_teams: Array<{
+    team_name: string;
+    favorite_count: number;
+    rank: number;
+  }>;
+  total_teams: number;
+  total_leagues: number;
+  leagues: string[];
+}
+
+// Function to fetch teams from API
+const fetchTeamsData = async (): Promise<Team[]> => {
+  try {
+    const response = await fetch('https://alluring-inspiration-production.up.railway.app/teams/all');
+    const data: ApiResponse = await response.json();
+    
+    // Get top 5 popular teams
+    const popularTeamNames = data.most_popular_teams.slice(0, 5).map(team => team.team_name);
+    
+    // Convert API data to Team format
+    const teams: Team[] = [];
+    
+    // Process each league and its teams
+    Object.entries(data.all_teams_by_league).forEach(([league, teamNames]) => {
+      teamNames.forEach(teamName => {
+        teams.push({
+          id: teamName.toLowerCase().replace(/\s+/g, '-'),
+          name: teamName,
+          sport: "Football",
+          league: league,
+          logo: teamLogos[teamName] || "⚽",
+          isPopular: popularTeamNames.includes(teamName)
+        });
+      });
+    });
+    
+    return teams;
+  } catch (error) {
+    console.error('Failed to fetch teams data:', error);
+    // Return empty array on error
+    return [];
+  }
+};
 
 export function FavoriteTeamsDrawer({ isOpen, onClose, onSave, initialSelectedTeams = [] }: FavoriteTeamsDrawerProps) {
   const [selectedTeams, setSelectedTeams] = useState<string[]>(initialSelectedTeams);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSport, setSelectedSport] = useState("All");
+  const [teamsData, setTeamsData] = useState<Team[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Fetch teams data when component mounts
+  useEffect(() => {
+    const loadTeams = async () => {
+      setIsLoading(true);
+      const teams = await fetchTeamsData();
+      setTeamsData(teams);
+      setIsLoading(false);
+    };
+    
+    if (isOpen) {
+      loadTeams();
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
+  
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+        <div className="bg-white rounded-2xl p-6 max-w-sm mx-4">
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+            <span className="text-gray-700">Loading teams...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const filteredTeams = teamsData.filter(team => {
     const matchesSearch = team.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -70,7 +228,18 @@ export function FavoriteTeamsDrawer({ isOpen, onClose, onSave, initialSelectedTe
   });
 
   const popularTeams = filteredTeams.filter(team => team.isPopular);
-  const otherTeams = filteredTeams.filter(team => !team.isPopular);
+  
+  // Group other teams by league
+  const teamsByLeague = filteredTeams.filter(team => !team.isPopular).reduce((acc, team) => {
+    if (!acc[team.league]) {
+      acc[team.league] = [];
+    }
+    acc[team.league].push(team);
+    return acc;
+  }, {} as Record<string, Team[]>);
+  
+  // Sort leagues alphabetically
+  const sortedLeagues = Object.keys(teamsByLeague).sort();
 
   const atMax = selectedTeams.length >= MAX_SELECTED;
 
@@ -184,20 +353,29 @@ export function FavoriteTeamsDrawer({ isOpen, onClose, onSave, initialSelectedTe
             </div>
           )}
 
-          {otherTeams.length > 0 && (
+          {sortedLeagues.length > 0 && (
             <div className="p-4">
               <h3 className="text-sm font-semibold text-gray-900 mb-3">
-                {popularTeams.length > 0 ? "All Teams" : "Teams"}
+                {popularTeams.length > 0 ? "All Teams by League" : "Teams by League"}
               </h3>
-              <div className="space-y-2">
-                {otherTeams.map((team) => (
-                  <TeamItem
-                    key={team.id}
-                    team={team}
-                    isSelected={selectedTeams.includes(team.id)}
-                    disabled={atMax && !selectedTeams.includes(team.id)}
-                    onToggle={() => handleTeamToggle(team.id)}
-                  />
+              <div className="space-y-4">
+                {sortedLeagues.map((league) => (
+                  <div key={league}>
+                    <h4 className="text-xs font-medium text-gray-600 mb-2 uppercase tracking-wide">
+                      {league}
+                    </h4>
+                    <div className="space-y-2">
+                      {teamsByLeague[league].map((team) => (
+                        <TeamItem
+                          key={team.id}
+                          team={team}
+                          isSelected={selectedTeams.includes(team.id)}
+                          disabled={atMax && !selectedTeams.includes(team.id)}
+                          onToggle={() => handleTeamToggle(team.id)}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
