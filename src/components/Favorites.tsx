@@ -392,17 +392,6 @@ export function Favorites({
                   ))}
                 </div>
               </div>
-            ) : (
-              <div className="text-xs text-gray-500 px-1">
-                Select your favourite teams and leagues from{" "}
-                <button
-                  type="button"
-                  onClick={() => setIsSettingsOpen(true)}
-                  className="underline underline-offset-2 hover:text-black"
-                >
-                  Settings
-                </button>.
-              </div>
             )}
           </div>
         </div>
