@@ -32,6 +32,78 @@ type ApiResponse = {
 const API_URL = "https://alluring-inspiration-production.up.railway.app/betting/analyze-fast";
 const norm = (s?: string) => (s || "").toLowerCase();
 
+// Mock data for specific queries
+const MOCK_DATA: Record<string, ApiResponse> = {
+  "I want to see Man City games with odds under 1.3 any market": {
+    query: "I want to see Man City games with odds under 1.3 any market",
+    user_id: "aag",
+    extracted_filters: {
+      teams: ["Man City"],
+      market_types: [],
+      min_odds: null,
+      max_odds: 1.3,
+      date_from: null,
+      date_to: null,
+      league: "Premier League"
+    },
+    matches: [
+      {
+        home_team: "Manchester City",
+        away_team: "Burnley FC",
+        match_date: "2025-09-27T14:00:00Z",
+        league: "Premier League",
+        relevance: 1,
+        markets: {
+          "1X2 | Full Time": {
+            "1": 1.15
+          },
+          "Double Chance | Full Time": {
+            "12": 1.1,
+            "1X": 1.05
+          },
+          "Over/Under | Full Time": {
+            "Over 1.5": 1.13,
+            "Under 5.5": 1.12
+          }
+        },
+        odds: {
+          "1": 1.15,
+          "2": 0,
+          "X": 0
+        },
+        event_id: "29846177",
+        competition: "Football - England - Premier League"
+      },
+      {
+        home_team: "Brentford FC",
+        away_team: "Manchester City",
+        match_date: "2025-10-05T15:30:00Z",
+        league: "Premier League",
+        relevance: 1,
+        markets: {
+          "Double Chance | Full Time": {
+            "12": 1.23,
+            "X2": 1.21
+          },
+          "Over/Under | Full Time": {
+            "Over 0.5": 1.02,
+            "Over 1.5": 1.17,
+            "Under 4.5": 1.22,
+            "Under 5.5": 1.07
+          }
+        },
+        odds: {
+          "1": 0,
+          "2": 0,
+          "X": 0
+        },
+        event_id: "30000315",
+        competition: "Football - England - Premier League"
+      }
+    ]
+  }
+};
+
 export type MarketKind = "1x2" | "ou" | "btts" | "dc" | "htft";
 
 export type ProviderItem =
@@ -286,6 +358,60 @@ export function useAIProvider() {
   const search = useCallback(async (query: string, opts?: { userId?: string; max?: number; timeoutMs?: number }) : Promise<ProviderItem[]> => {
     const q = (query || "").trim();
     if (!q) return [];
+
+    // Check for mock data first
+    if (MOCK_DATA[q]) {
+      console.log(`🎯 Using mock data for query: "${q}"`);
+      const data = MOCK_DATA[q];
+      
+      // Still run auto-add to favorites for mock data
+      setTimeout(() => autoAddToFavorites(q, data.extracted_filters), 100);
+      
+      // Continue with the same processing logic for mock data
+      const wanted = (data.extracted_filters?.market_types || []).map(norm);
+      const toKind = (t: string): MarketKind => {
+        if (/^1x2$|(^|\W)1x2(\W|$)/i.test(t)) return "1x2";
+        if (/over\/?under|totals|^ou$/i.test(t)) return "ou";
+        if (/btts|both.*score/i.test(t)) return "btts";
+        if (/double\s*chance|^dc$/i.test(t)) return "dc";
+        if (/half.*full|ht\/ft/i.test(t)) return "htft";
+        return "1x2";
+      };
+      const restrictTo = new Set<MarketKind>((wanted.length ? wanted : ["1x2"]).map(toKind));
+
+      const items: ProviderItem[] = [];
+      for (const m of data.matches || []) {
+        const base = {
+          id: makeEventId(m),
+          startISO: m.match_date,
+          league: m.league || "",
+          competition: m.competition,
+          teams: [{ name: m.home_team }, { name: m.away_team }] as [{name:string},{name:string}],
+        };
+
+        if (restrictTo.has("1x2")) {
+          const x = pick1x2(m);
+          if (x.one || x.draw || x.two) items.push({ kind: "1x2", ...base, data: x });
+        }
+        if (restrictTo.has("ou")) {
+          const arr = pickOUAllLines(m);
+          if (arr) items.push({ kind: "ou", ...base, data: arr });
+        }
+        if (restrictTo.has("btts")) {
+          const x = pickBTTS(m);
+          if (x) items.push({ kind: "btts", ...base, data: x });
+        }
+        if (restrictTo.has("dc")) {
+          const x = pickDC(m);
+          if (x) items.push({ kind: "dc", ...base, data: x });
+        }
+        if (restrictTo.has("htft")) {
+          const x = pickHTFT(m);
+          if (x) items.push({ kind: "htft", ...base, data: x });
+        }
+      }
+      return items;
+    }
 
     try { abortRef.current?.abort(); } catch {}
     abortRef.current = new AbortController();

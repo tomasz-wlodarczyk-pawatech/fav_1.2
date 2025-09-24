@@ -1,0 +1,90 @@
+{
+  "query": "I want to favourite Arsenal OU and BTTS",
+  "user_id": "aag",
+  "extracted_filters": {
+    "teams": [
+      "Arsenal"
+    ],
+    "market_types": [
+      "over/under",
+      "both teams to score"
+    ],
+    "min_odds": null,
+    "max_odds": null,
+    "date_from": null,
+    "date_to": null,
+    "league": "Premier League"
+  },
+  "matches": [
+    {
+      "home_team": "Newcastle United",
+      "away_team": "Arsenal FC",
+      "match_date": "2025-09-28T15:30:00Z",
+      "league": "Premier League",
+      "relevance": 1,
+      "markets": {
+        "Both Teams To Score | Full Time": {
+          "Yes": 1.84,
+          "No": 1.97
+        },
+        "Over/Under | Full Time": {
+          "Over 0.5": 1.06,
+          "Under 0.5": 9.25,
+          "Over 1.5": 1.33,
+          "Under 1.5": 3.3,
+          "Over 2.5": 2.03,
+          "Under 2.5": 1.79,
+          "Over 3.5": 3.55,
+          "Under 3.5": 1.29,
+          "Over 4.5": 7.25,
+          "Under 4.5": 1.09,
+          "Over 5.5": 14,
+          "Under 5.5": 1.02
+        }
+      },
+      "odds": {
+        "1": 0,
+        "2": 0,
+        "X": 0
+      },
+      "event_id": "29860387",
+      "competition": "Football - England - Premier League"
+    },
+    {
+      "home_team": "Arsenal FC",
+      "away_team": "West Ham United",
+      "match_date": "2025-10-04T14:00:00Z",
+      "league": "Premier League",
+      "relevance": 1,
+      "markets": {
+        "Both Teams To Score | Full Time": {
+          "Yes": 2.21,
+          "No": 1.67
+        },
+        "Over/Under | Full Time": {
+          "Over 0.5": 1.01,
+          "Under 0.5": 15,
+          "Over 1.5": 1.17,
+          "Under 1.5": 4.95,
+          "Over 2.5": 1.56,
+          "Under 2.5": 2.45,
+          "Over 3.5": 2.45,
+          "Under 3.5": 1.56,
+          "Over 4.5": 4.25,
+          "Under 4.5": 1.22,
+          "Over 5.5": 8,
+          "Under 5.5": 1.07
+        }
+      },
+      "odds": {
+        "1": 0,
+        "2": 0,
+        "X": 0
+      },
+      "event_id": "29990760",
+      "competition": "Football - England - Premier League"
+    }
+  ],
+  "execution_time": 3.0907702445983887,
+  "timestamp": "2025-09-24T10:42:40.842115"
+}
