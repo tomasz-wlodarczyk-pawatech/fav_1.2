@@ -2,7 +2,9 @@ import { useMemo, useState, useEffect } from "react";
 import { Star, Users, Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { favoritesStore } from "../lib/favoritesStore";
+import { favoritesStoreV2 } from "../lib/favoritesStoreV2";
 import { getSportsMatchData } from "./SportsMatchData";
+import MarketMatchCard from "./MarketMatchCard";
 
 // Data types
 type TeamFav = { id: string; name: string; subtitle: string; logo: string };
@@ -137,7 +139,9 @@ export default function HomeFavoritesWidget() {
 
   // Subscribe to favoritesStore changes
   const [_, setTick] = useState(0);
+  const [_2, setMarketTick] = useState(0);
   useEffect(() => favoritesStore.subscribe(() => setTick((t) => t + 1)), []);
+  useEffect(() => favoritesStoreV2.subscribe(() => setMarketTick((t) => t + 1)), []);
 
   // Read saved favorites from localStorage
   const teams = readJSON<TeamFav[]>('favTeams', []);
@@ -166,6 +170,12 @@ export default function HomeFavoritesWidget() {
     return resolved.sort(byTime).slice(0, 3);
   }, [favoriteEventIds, allMatches]);
 
+  // Enhanced market favorites (all market types with snapshots)
+  const favoriteMarketData = favoritesStoreV2.list();
+  const favMarketItems = useMemo(() => {
+    return favoriteMarketData.slice(0, 3); // Show top 3 market favorites
+  }, [favoriteMarketData]);
+
   const handleItemClick = () => {
     navigate('/favorites');
   };
@@ -180,19 +190,42 @@ export default function HomeFavoritesWidget() {
       <div className="mt-3">
         {activeTab === "events" && (
           <>
-            {favoriteEvents.length > 0 ? (
-              <div className="space-y-2">
-                {favoriteEvents.map((match: any) => (
-                  <EventRow key={match.id} match={match} onClick={() => navigate('/favorites')} />
-                ))}
-              </div>
-            ) : (
-              <EmptyMini
-                icon={<Trophy className="w-5 h-5 text-gray-500" />}
-                title="No sports favorites yet"
-                onClick={() => navigate('/sports')}
-              />
-            )}
+            <div className="space-y-4">
+              {/* Market Favorites Section */}
+              {favMarketItems.length > 0 && (
+                <div>
+                  <h4 className="text-xs font-medium text-gray-600 mb-2 uppercase tracking-wide">Favorite Markets</h4>
+                  <div className="space-y-2">
+                    {favMarketItems.map((rec) => (
+                      <MarketMatchCard key={rec.key} item={rec.item} />
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Legacy Match Favorites */}
+              {favoriteEvents.length > 0 && (
+                <div>
+                  {favMarketItems.length > 0 && (
+                    <h4 className="text-xs font-medium text-gray-600 mb-2 uppercase tracking-wide">Favorite Events</h4>
+                  )}
+                  <div className="space-y-2">
+                    {favoriteEvents.map((match: any) => (
+                      <EventRow key={match.id} match={match} onClick={() => navigate('/favorites')} />
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Empty state */}
+              {favoriteEvents.length === 0 && favMarketItems.length === 0 && (
+                <EmptyMini
+                  icon={<Trophy className="w-5 h-5 text-gray-500" />}
+                  title="No sports favorites yet"
+                  onClick={() => navigate('/sports')}
+                />
+              )}
+            </div>
           </>
         )}
 
