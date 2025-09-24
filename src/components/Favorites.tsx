@@ -371,7 +371,7 @@ export function Favorites({
 
           {/* Mixed pills row (Teams + Leagues) with reliable empty state */}
           <div className="mt-2">
-            {mergedPills.length > 0 ? (
+            {mergedPills.length > 0 && (
               <div className="overflow-x-auto hide-scroll pr-1 [-ms-overflow-style:none] [scrollbar-width:none]">
                 <style>{`.hide-scroll::-webkit-scrollbar{display:none}`}</style>
                 <div className="flex items-center gap-2 whitespace-nowrap">
