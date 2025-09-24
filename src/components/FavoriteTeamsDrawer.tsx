@@ -138,6 +138,15 @@ const teamLogos: Record<string, string> = {
 
 const sports = ["All", "Football"];
 
+// Hardcoded top 5 popular teams
+const POPULAR_TEAMS = [
+  { name: "Real Madrid", rank: 1, league: "La Liga" },
+  { name: "FC Barcelona", rank: 2, league: "La Liga" },
+  { name: "Manchester City", rank: 3, league: "Premier League" },
+  { name: "Paris Saint-Germain", rank: 4, league: "Ligue 1" },
+  { name: "Arsenal FC", rank: 5, league: "Premier League" }
+];
+
 interface ApiResponse {
   all_teams_by_league: Record<string, string[]>;
   most_popular_teams: Array<{
@@ -156,17 +165,13 @@ const fetchTeamsData = async (): Promise<Team[]> => {
     const response = await fetch('https://alluring-inspiration-production.up.railway.app/teams/all');
     const data: ApiResponse = await response.json();
     
-    // Get top 5 popular teams sorted by rank (1, 2, 3, 4, 5)
-    const sortedPopularTeams = data.most_popular_teams
-      .sort((a, b) => a.rank - b.rank)
-      .slice(0, 5);
-    
-    const popularTeamNames = sortedPopularTeams.map(team => team.team_name);
+    // Use hardcoded popular teams instead of API data
+    const popularTeamNames = POPULAR_TEAMS.map(team => team.name);
     
     // Create rank mapping for quick lookup
     const teamRankMap = new Map();
-    sortedPopularTeams.forEach(team => {
-      teamRankMap.set(team.team_name, team.rank);
+    POPULAR_TEAMS.forEach(team => {
+      teamRankMap.set(team.name, team.rank);
     });
     
     // Convert API data to Team format
