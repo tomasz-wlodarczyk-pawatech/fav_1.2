@@ -108,6 +108,9 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
       return;
     }
 
+    // Skip if already executed for this query (prevents duplicate executions)
+    if (hasSearchExecuted && q === initialQuery) return;
+
     const delay = isInitialQuery ? 100 : 500; // Fast for initial, debounced for typing
     if (isInitialQuery) setHasSearchExecuted(true);
 
@@ -128,7 +131,7 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
     }, delay);
 
     return () => clearTimeout(timeoutId);
-  }, [q, search, onClose, navigate, isOpen, initialQuery, hasSearchExecuted]);
+  }, [q, isOpen, initialQuery, hasSearchExecuted]); // Reduced dependencies
 
   if (!mounted) return null;
 
