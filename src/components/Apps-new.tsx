@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Header } from "./Header";
 import { BottomNavigation } from "./BottomNavigation";
-import { FloatingBetslip } from "./FloatingBetslip";
 import exampleImage from 'figma:asset/ad6a2fa9460acd08e14b698e209c54a2f04c8765.png';
 import svgPaths from "../imports/svg-j2z99k9d1a";
 import { 
@@ -962,13 +961,6 @@ export function Apps({ activeItem, onAccountClick, onHelpClick, onFiltersClick, 
 
       </div>
 
-      {/* FloatingBetslip */}
-      <FloatingBetslip 
-        isMinimized={isBetslipMinimized}
-        onToggleMinimize={handleBetslipToggle}
-        onAccountClick={onAccountClick}
-        onHelpClick={onHelpClick}
-      />
       
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0">

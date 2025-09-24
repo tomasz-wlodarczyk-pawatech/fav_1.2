@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Header } from "./Header";
 import { BottomNavigation } from "./BottomNavigation";
-import { FloatingBetslip } from "./FloatingBetslip";
 
 interface HelpProps {
   activeItem: string;
@@ -35,17 +34,6 @@ export function Help({ activeItem, onAccountClick, onNavigationClick, onHelpClic
       <div className="content-stretch flex flex-col items-start justify-start relative w-full pt-[48px] pb-[120px]">
       </div>
       
-      {/* Fixed floating betslip above bottom navigation */}
-      <div className={`fixed bottom-[68px] z-40 h-12 transition-all duration-300 ${
-        isBetslipMinimized 
-          ? 'right-4' 
-          : 'left-1/2 transform -translate-x-1/2'
-      }`}>
-        <FloatingBetslip 
-          isMinimized={isBetslipMinimized} 
-          onToggle={handleBetslipToggle} 
-        />
-      </div>
       
       {/* Fixed bottom navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-50">

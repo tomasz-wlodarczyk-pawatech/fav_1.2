@@ -4,7 +4,6 @@ import { PopularLeagues } from "./PopularLeagues";
 import { Football } from "./Football";
 import { Basketball } from "./Basketball";
 import { BottomNavigation } from "./BottomNavigation";
-import { FloatingBetslip } from "./FloatingBetslip";
 
 interface Homepage_v1Props {
   activeItem: string;
@@ -46,18 +45,6 @@ export function Homepage_v1({ activeItem, onAccountClick, onHelpClick, onLeagues
         <Basketball onFiltersClick={onFiltersClick} />
       </div>
       
-      {/* Fixed floating betslip above bottom navigation */}
-      <div className={`fixed bottom-[68px] z-40 h-12 transition-all duration-300 ${
-        isBetslipMinimized 
-          ? 'right-4' 
-          : 'left-1/2 transform -translate-x-1/2'
-      }`}>
-        <FloatingBetslip 
-          isMinimized={isBetslipMinimized} 
-          onToggle={handleBetslipToggle}
-          onBetslipClick={onBetslipClick}
-        />
-      </div>
       
       {/* Fixed bottom navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-50">
