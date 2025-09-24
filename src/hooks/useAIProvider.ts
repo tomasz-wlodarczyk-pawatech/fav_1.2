@@ -1,5 +1,6 @@
 import { useCallback, useRef } from "react";
 import { favoritesStore } from "../lib/favoritesStore";
+import { favoritesStoreV2 } from "../lib/favoritesStoreV2";
 
 type MarketsMap = Record<string, Record<string, number | string>>;
 
@@ -618,14 +619,29 @@ export function useAIProvider() {
         }
       }
 
-      // Check if query contains "favorite"/"favourite" and auto-add events to favorites
+      // Check if query contains "favorite"/"favourite" and auto-add items to favorites
       if (/\b(favorite|favourite)\b/i.test(q)) {
-        const eventIds = items.map(item => item.id);
-        if (eventIds.length > 0) {
-          const currentFavorites = favoritesStore.get();
-          const newFavorites = [...currentFavorites, ...eventIds.filter(id => !currentFavorites.includes(id))];
-          favoritesStore.set(newFavorites);
-          console.log(`🌟 Auto-added ${eventIds.length} event(s) to favorites:`, eventIds);
+        let addedCount = 0;
+        const addedItems: string[] = [];
+        
+        items.forEach(item => {
+          // Add to favoritesStoreV2 (for Favourite markets section)
+          const key = favoritesStoreV2.keyFor(item);
+          if (!favoritesStoreV2.has(key)) {
+            favoritesStoreV2.upsert(item);
+            addedCount++;
+            addedItems.push(`${item.teams[0].name} vs ${item.teams[1].name} (${item.kind.toUpperCase()})`);
+          }
+          
+          // Also add to regular favoritesStore (for match cards)
+          if (!favoritesStore.has(item.id)) {
+            const currentFavorites = favoritesStore.get();
+            favoritesStore.set([...currentFavorites, item.id]);
+          }
+        });
+        
+        if (addedCount > 0) {
+          console.log(`🌟 Auto-added ${addedCount} market item(s) to favorites:`, addedItems);
         }
       }
 
@@ -706,14 +722,29 @@ export function useAIProvider() {
       }
     }
 
-    // Check if query contains "favorite"/"favourite" and auto-add events to favorites
+    // Check if query contains "favorite"/"favourite" and auto-add items to favorites
     if (/\b(favorite|favourite)\b/i.test(q)) {
-      const eventIds = items.map(item => item.id);
-      if (eventIds.length > 0) {
-        const currentFavorites = favoritesStore.get();
-        const newFavorites = [...currentFavorites, ...eventIds.filter(id => !currentFavorites.includes(id))];
-        favoritesStore.set(newFavorites);
-        console.log(`🌟 Auto-added ${eventIds.length} event(s) to favorites:`, eventIds);
+      let addedCount = 0;
+      const addedItems: string[] = [];
+      
+      items.forEach(item => {
+        // Add to favoritesStoreV2 (for Favourite markets section)
+        const key = favoritesStoreV2.keyFor(item);
+        if (!favoritesStoreV2.has(key)) {
+          favoritesStoreV2.upsert(item);
+          addedCount++;
+          addedItems.push(`${item.teams[0].name} vs ${item.teams[1].name} (${item.kind.toUpperCase()})`);
+        }
+        
+        // Also add to regular favoritesStore (for match cards)
+        if (!favoritesStore.has(item.id)) {
+          const currentFavorites = favoritesStore.get();
+          favoritesStore.set([...currentFavorites, item.id]);
+        }
+      });
+      
+      if (addedCount > 0) {
+        console.log(`🌟 Auto-added ${addedCount} market item(s) to favorites:`, addedItems);
       }
     }
 
