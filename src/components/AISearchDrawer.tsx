@@ -28,15 +28,19 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
     if (isOpen && initialQuery.trim() && initialQuery.trim().length >= 2) {
       // Check if query contains "favorite"/"favourite" first - instant response
       if (/\b(favorite|favourite)\b/i.test(initialQuery.trim())) {
-        console.log("🎯 Query contains 'favorite' - executing search and navigating instantly");
+        console.log("🎯 Query contains 'favorite' - executing search and navigating after 1 second");
         
-        // Execute search immediately without delay for favorites
+        // Execute search immediately but navigate after 1 second delay
         search(initialQuery.trim()).then(() => {
-          onClose(); // Close the modal
-          navigate('/favorites'); // Navigate to favorites
+          setTimeout(() => {
+            onClose(); // Close the modal
+            navigate('/favorites'); // Navigate to favorites
+          }, 1000); // 1 second delay
         }).catch(() => {
-          onClose();
-          navigate('/favorites');
+          setTimeout(() => {
+            onClose();
+            navigate('/favorites');
+          }, 1000); // 1 second delay
         });
         return;
       }
@@ -91,18 +95,22 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
 
     // Check if query contains "favorite"/"favourite" first - instant response
     if (/\b(favorite|favourite)\b/i.test(q.trim())) {
-      console.log("🎯 Query contains 'favorite' - executing search and navigating instantly");
+      console.log("🎯 Query contains 'favorite' - executing search and navigating after 1 second");
       
       // Execute search immediately without debounce for favorites
       setIsLoading(true);
       search(q.trim()).then(() => {
         setIsLoading(false);
-        onClose(); // Close the modal
-        navigate('/favorites'); // Navigate to favorites
+        setTimeout(() => {
+          onClose(); // Close the modal
+          navigate('/favorites'); // Navigate to favorites
+        }, 1000); // 1 second delay
       }).catch(() => {
         setIsLoading(false);
-        onClose();
-        navigate('/favorites');
+        setTimeout(() => {
+          onClose();
+          navigate('/favorites');
+        }, 1000); // 1 second delay
       });
       return;
     }
