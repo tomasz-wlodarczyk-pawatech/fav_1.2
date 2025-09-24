@@ -194,7 +194,7 @@ export default function HomeFavoritesWidget() {
               {/* Market Favorites Section */}
               {favMarketItems.length > 0 && (
                 <div>
-                  <div className="border-t border-gray-200 mb-3"></div>
+                  <div className="border-t border-gray-200"></div>
                   <h4 className="text-xs font-medium text-gray-600 mb-2 uppercase tracking-wide">Favorite Markets</h4>
                   <div className="space-y-2">
                     {favMarketItems.map((rec) => (
