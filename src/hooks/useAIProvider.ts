@@ -101,6 +101,129 @@ const MOCK_DATA: Record<string, ApiResponse> = {
         competition: "Football - England - Premier League"
       }
     ]
+  },
+  "I love betting on Man City": {
+    query: "I love betting on Man City",
+    user_id: "aag",
+    extracted_filters: {
+      teams: ["Man City"],
+      market_types: [],
+      min_odds: null,
+      max_odds: null,
+      date_from: null,
+      date_to: null,
+      league: "Premier League"
+    },
+    matches: [
+      {
+        home_team: "Manchester City",
+        away_team: "Burnley FC",
+        match_date: "2025-09-27T14:00:00Z",
+        league: "Premier League",
+        relevance: 1,
+        markets: {
+          "1X2 | Full Time": {
+            "1": 1.15,
+            "2": 15.5,
+            "X": 8
+          },
+          "Double Chance | Full Time": {
+            "12": 1.1,
+            "1X": 1.05,
+            "X2": 4.3
+          },
+          "Both Teams To Score | Full Time": {
+            "Yes": 2.15,
+            "No": 1.7
+          },
+          "Over/Under | Full Time": {
+            "Over 1.5": 1.13,
+            "Under 1.5": 6,
+            "Over 2.5": 1.43,
+            "Under 2.5": 2.8,
+            "Over 3.5": 2.09,
+            "Under 3.5": 1.74,
+            "Over 4.5": 3.5,
+            "Under 4.5": 1.31,
+            "Over 5.5": 6.25,
+            "Under 5.5": 1.12
+          },
+          "Half Time/Full Time": {
+            "1/1": 1.47,
+            "1/X": 28,
+            "1/2": 100,
+            "X/1": 4.1,
+            "X/X": 11,
+            "X/2": 29,
+            "2/1": 25,
+            "2/X": 35,
+            "2/2": 26
+          }
+        },
+        odds: {
+          "1": 1.15,
+          "2": 15.5,
+          "X": 8
+        },
+        event_id: "29846177",
+        competition: "Football - England - Premier League"
+      },
+      {
+        home_team: "Brentford FC",
+        away_team: "Manchester City",
+        match_date: "2025-10-05T15:30:00Z",
+        league: "Premier League",
+        relevance: 1,
+        markets: {
+          "1X2 | Full Time": {
+            "1": 4.65,
+            "2": 1.64,
+            "X": 4.35
+          },
+          "Double Chance | Full Time": {
+            "12": 1.23,
+            "1X": 2.17,
+            "X2": 1.21
+          },
+          "Both Teams To Score | Full Time": {
+            "Yes": 1.63,
+            "No": 2.3
+          },
+          "Over/Under | Full Time": {
+            "Over 0.5": 1.02,
+            "Under 0.5": 14,
+            "Over 1.5": 1.17,
+            "Under 1.5": 4.95,
+            "Over 2.5": 1.57,
+            "Under 2.5": 2.4,
+            "Over 3.5": 2.45,
+            "Under 3.5": 1.56,
+            "Over 4.5": 4.25,
+            "Under 4.5": 1.22,
+            "Over 5.5": 8,
+            "Under 5.5": 1.07
+          },
+          "Half Time/Full Time": {
+            "1/1": 7.75,
+            "1/X": 17,
+            "1/2": 22,
+            "X/1": 11,
+            "X/X": 6.75,
+            "X/2": 4.75,
+            "2/1": 45,
+            "2/X": 16,
+            "2/2": 2.3
+          }
+        },
+        odds: {
+          "1": 4.65,
+          "2": 1.64,
+          "X": 4.35
+        },
+        event_id: "30000315",
+        competition: "Football - England - Premier League"
+      }
+    ]
   }
 };
 
