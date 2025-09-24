@@ -310,8 +310,8 @@ const MOCK_DATA: Record<string, ApiResponse> = {
       }
     ]
   },
-  "mock PSG 1x2 OU": {
-    query: "mock PSG 1x2 OU",
+  "PSG 1x2 OU": {
+    query: "PSG 1x2 OU",
     user_id: "aag",
     extracted_filters: {
       teams: ["PSG"],
