@@ -390,6 +390,153 @@ const MOCK_DATA: Record<string, ApiResponse> = {
         competition: "Football - France - Ligue 1"
       }
     ]
+  },
+  "I love Serie A and Premier League and betting on 1x2 and OU markets": {
+    query: "I love Serie A and Premier League and betting on 1x2 and OU markets",
+    user_id: "aag",
+    extracted_filters: {
+      teams: [],
+      market_types: ["1x2", "over/under"],
+      min_odds: null,
+      max_odds: null,
+      date_from: null,
+      date_to: null,
+      league: null
+    },
+    matches: [
+      {
+        home_team: "AC Milan",
+        away_team: "Juventus FC",
+        match_date: "2025-09-29T18:45:00Z",
+        league: "Serie A",
+        relevance: 1,
+        markets: {
+          "1X2 | Full Time": {
+            "1": 2.45,
+            "X": 3.25,
+            "2": 2.85
+          },
+          "Over/Under | Full Time": {
+            "Over 0.5": 1.08,
+            "Under 0.5": 7.50,
+            "Over 1.5": 1.38,
+            "Under 1.5": 2.95,
+            "Over 2.5": 2.12,
+            "Under 2.5": 1.72,
+            "Over 3.5": 3.45,
+            "Under 3.5": 1.31,
+            "Over 4.5": 6.25,
+            "Under 4.5": 1.13
+          }
+        },
+        odds: {
+          "1": 2.45,
+          "X": 3.25,
+          "2": 2.85
+        },
+        event_id: "30145632",
+        competition: "Football - Italy - Serie A"
+      },
+      {
+        home_team: "Manchester United",
+        away_team: "Tottenham Hotspur",
+        match_date: "2025-09-29T16:30:00Z",
+        league: "Premier League",
+        relevance: 1,
+        markets: {
+          "1X2 | Full Time": {
+            "1": 2.15,
+            "X": 3.45,
+            "2": 3.20
+          },
+          "Over/Under | Full Time": {
+            "Over 0.5": 1.05,
+            "Under 0.5": 9.00,
+            "Over 1.5": 1.32,
+            "Under 1.5": 3.15,
+            "Over 2.5": 1.95,
+            "Under 2.5": 1.82,
+            "Over 3.5": 3.25,
+            "Under 3.5": 1.34,
+            "Over 4.5": 5.85,
+            "Under 4.5": 1.14
+          }
+        },
+        odds: {
+          "1": 2.15,
+          "X": 3.45,
+          "2": 3.20
+        },
+        event_id: "30089764",
+        competition: "Football - England - Premier League"
+      },
+      {
+        home_team: "Inter Milan",
+        away_team: "AS Roma",
+        match_date: "2025-10-02T19:00:00Z",
+        league: "Serie A",
+        relevance: 1,
+        markets: {
+          "1X2 | Full Time": {
+            "1": 1.85,
+            "X": 3.65,
+            "2": 4.15
+          },
+          "Over/Under | Full Time": {
+            "Over 0.5": 1.06,
+            "Under 0.5": 8.25,
+            "Over 1.5": 1.35,
+            "Under 1.5": 3.05,
+            "Over 2.5": 2.05,
+            "Under 2.5": 1.75,
+            "Over 3.5": 3.55,
+            "Under 3.5": 1.29,
+            "Over 4.5": 6.50,
+            "Under 4.5": 1.11
+          }
+        },
+        odds: {
+          "1": 1.85,
+          "X": 3.65,
+          "2": 4.15
+        },
+        event_id: "30145789",
+        competition: "Football - Italy - Serie A"
+      },
+      {
+        home_team: "Brighton & Hove Albion",
+        away_team: "Newcastle United",
+        match_date: "2025-10-03T14:00:00Z",
+        league: "Premier League",
+        relevance: 1,
+        markets: {
+          "1X2 | Full Time": {
+            "1": 2.65,
+            "X": 3.15,
+            "2": 2.75
+          },
+          "Over/Under | Full Time": {
+            "Over 0.5": 1.07,
+            "Under 0.5": 7.75,
+            "Over 1.5": 1.42,
+            "Under 1.5": 2.85,
+            "Over 2.5": 2.25,
+            "Under 2.5": 1.65,
+            "Over 3.5": 3.85,
+            "Under 3.5": 1.26,
+            "Over 4.5": 7.25,
+            "Under 4.5": 1.09
+          }
+        },
+        odds: {
+          "1": 2.65,
+          "X": 3.15,
+          "2": 2.75
+        },
+        event_id: "30089821",
+        competition: "Football - England - Premier League"
+      }
+    ]
   }
 };
 
