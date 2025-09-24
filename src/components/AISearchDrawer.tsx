@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { X, Search, Loader2 } from "lucide-react";
 import { MatchCard } from "./MatchCard";
 import MarketMatchCard from "./MarketMatchCard";
@@ -19,6 +20,7 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { search } = useAIProvider();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setQ(initialQuery);
@@ -31,6 +33,15 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
       const timeoutId = setTimeout(async () => {
         try {
           const searchResults = await search(initialQuery.trim());
+          
+          // Check if query contains "favorite"/"favourite" - if so, navigate directly to favorites
+          if (/\b(favorite|favourite)\b/i.test(initialQuery.trim())) {
+            console.log("🎯 Query contains 'favorite' - navigating to favorites page");
+            onClose(); // Close the modal
+            navigate('/favorites'); // Navigate to favorites
+            return; // Don't set results
+          }
+          
           setResults(searchResults);
         } catch (err) {
           setError(err instanceof Error ? err.message : "Search failed");
@@ -42,7 +53,7 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
       
       return () => clearTimeout(timeoutId);
     }
-  }, [initialQuery, isOpen, search]);
+  }, [initialQuery, isOpen, search, onClose, navigate]);
   
   useEffect(() => { if (isOpen) setMounted(true); }, [isOpen]);
 
@@ -78,6 +89,15 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
       setResults([]); // Clear previous results when starting new search
       try {
         const searchResults = await search(q.trim());
+        
+        // Check if query contains "favorite"/"favourite" - if so, navigate directly to favorites
+        if (/\b(favorite|favourite)\b/i.test(q.trim())) {
+          console.log("🎯 Query contains 'favorite' - navigating to favorites page");
+          onClose(); // Close the modal
+          navigate('/favorites'); // Navigate to favorites
+          return; // Don't set results
+        }
+        
         setResults(searchResults);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Search failed");
@@ -88,7 +108,7 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
     }, 500); // 500ms debounce
 
     return () => clearTimeout(timeoutId);
-  }, [q, search]);
+  }, [q, search, onClose, navigate]);
 
   if (!mounted) return null;
 
