@@ -754,6 +754,31 @@ function pick1x2(m: ApiMatch) {
   return { one: g(src?.["1"]), draw: g(src?.["X"]), two: g(src?.["2"]) };
 }
 
+function marketMeetsOddsCriteria(marketData: any, minOdds?: number | null, maxOdds?: number | null): boolean {
+  if (!marketData || (minOdds == null && maxOdds == null)) return true;
+  
+  let values: any[] = [];
+  
+  // Handle different market data formats
+  if (Array.isArray(marketData)) {
+    // Over/Under format: array of {line, over, under}
+    values = marketData.flatMap(item => [item.over, item.under]).filter(v => v != null && v !== 0);
+  } else {
+    // Regular object format: {one, draw, two} or {yes, no} etc.
+    values = Object.values(marketData).filter(v => v != null && v !== 0);
+  }
+  
+  return values.some(val => {
+    const odds = typeof val === 'string' ? parseFloat(val) : Number(val);
+    if (isNaN(odds) || odds === 0) return false;
+    
+    if (minOdds != null && odds < minOdds) return false;
+    if (maxOdds != null && odds > maxOdds) return false;
+    
+    return true;
+  });
+}
+
 function pickOUAllLines(m: ApiMatch) {
   const name = Object.keys(m.markets || {}).find(k => /over\/?under/i.test(k));
   if (!name) return null;
@@ -1004,7 +1029,13 @@ export function useAIProvider() {
         if (/half.*full|ht\/ft/i.test(t)) return "htft";
         return "1x2";
       };
-      const restrictTo = new Set<MarketKind>((wanted.length ? wanted : ["1x2"]).map(toKind));
+      // If there are odds filters (min/max), check all market types to find qualifying odds
+      const hasOddsFilter = data.extracted_filters?.min_odds != null || data.extracted_filters?.max_odds != null;
+      const restrictTo = new Set<MarketKind>(
+        hasOddsFilter 
+          ? ["1x2", "ou", "btts", "dc", "htft"] // Check all markets when filtering by odds
+          : (wanted.length ? wanted : ["1x2"]).map(toKind)
+      );
 
       const items: ProviderItem[] = [];
       for (const m of data.matches || []) {
@@ -1016,25 +1047,38 @@ export function useAIProvider() {
           teams: [{ name: m.home_team }, { name: m.away_team }] as [{name:string},{name:string}],
         };
 
+        const minOdds = data.extracted_filters?.min_odds;
+        const maxOdds = data.extracted_filters?.max_odds;
+
         if (restrictTo.has("1x2")) {
           const x = pick1x2(m);
-          if (x.one || x.draw || x.two) items.push({ kind: "1x2", ...base, data: x });
+          if ((x.one || x.draw || x.two) && marketMeetsOddsCriteria(x, minOdds, maxOdds)) {
+            items.push({ kind: "1x2", ...base, data: x });
+          }
         }
         if (restrictTo.has("ou")) {
           const arr = pickOUAllLines(m);
-          if (arr) items.push({ kind: "ou", ...base, data: arr });
+          if (arr && marketMeetsOddsCriteria(arr, minOdds, maxOdds)) {
+            items.push({ kind: "ou", ...base, data: arr });
+          }
         }
         if (restrictTo.has("btts")) {
           const x = pickBTTS(m);
-          if (x) items.push({ kind: "btts", ...base, data: x });
+          if (x && marketMeetsOddsCriteria(x, minOdds, maxOdds)) {
+            items.push({ kind: "btts", ...base, data: x });
+          }
         }
         if (restrictTo.has("dc")) {
           const x = pickDC(m);
-          if (x) items.push({ kind: "dc", ...base, data: x });
+          if (x && marketMeetsOddsCriteria(x, minOdds, maxOdds)) {
+            items.push({ kind: "dc", ...base, data: x });
+          }
         }
         if (restrictTo.has("htft")) {
           const x = pickHTFT(m);
-          if (x) items.push({ kind: "htft", ...base, data: x });
+          if (x && marketMeetsOddsCriteria(x, minOdds, maxOdds)) {
+            items.push({ kind: "htft", ...base, data: x });
+          }
         }
       }
 
@@ -1107,7 +1151,13 @@ export function useAIProvider() {
       if (/half.*full|ht\/ft/i.test(t)) return "htft";
       return "1x2";
     };
-    const restrictTo = new Set<MarketKind>((wanted.length ? wanted : ["1x2"]).map(toKind));
+    // If there are odds filters (min/max), check all market types to find qualifying odds
+    const hasOddsFilter = data.extracted_filters?.min_odds != null || data.extracted_filters?.max_odds != null;
+    const restrictTo = new Set<MarketKind>(
+      hasOddsFilter 
+        ? ["1x2", "ou", "btts", "dc", "htft"] // Check all markets when filtering by odds
+        : (wanted.length ? wanted : ["1x2"]).map(toKind)
+    );
 
     const items: ProviderItem[] = [];
     for (const m of data.matches || []) {
@@ -1119,25 +1169,38 @@ export function useAIProvider() {
         teams: [{ name: m.home_team }, { name: m.away_team }] as [{name:string},{name:string}],
       };
 
+      const minOdds = data.extracted_filters?.min_odds;
+      const maxOdds = data.extracted_filters?.max_odds;
+
       if (restrictTo.has("1x2")) {
         const x = pick1x2(m);
-        if (x.one || x.draw || x.two) items.push({ kind: "1x2", ...base, data: x });
+        if ((x.one || x.draw || x.two) && marketMeetsOddsCriteria(x, minOdds, maxOdds)) {
+          items.push({ kind: "1x2", ...base, data: x });
+        }
       }
       if (restrictTo.has("ou")) {
         const arr = pickOUAllLines(m);
-        if (arr) items.push({ kind: "ou", ...base, data: arr });
+        if (arr && marketMeetsOddsCriteria(arr, minOdds, maxOdds)) {
+          items.push({ kind: "ou", ...base, data: arr });
+        }
       }
       if (restrictTo.has("btts")) {
         const x = pickBTTS(m);
-        if (x) items.push({ kind: "btts", ...base, data: x });
+        if (x && marketMeetsOddsCriteria(x, minOdds, maxOdds)) {
+          items.push({ kind: "btts", ...base, data: x });
+        }
       }
       if (restrictTo.has("dc")) {
         const x = pickDC(m);
-        if (x) items.push({ kind: "dc", ...base, data: x });
+        if (x && marketMeetsOddsCriteria(x, minOdds, maxOdds)) {
+          items.push({ kind: "dc", ...base, data: x });
+        }
       }
       if (restrictTo.has("htft")) {
         const x = pickHTFT(m);
-        if (x) items.push({ kind: "htft", ...base, data: x });
+        if (x && marketMeetsOddsCriteria(x, minOdds, maxOdds)) {
+          items.push({ kind: "htft", ...base, data: x });
+        }
       }
     }
 
