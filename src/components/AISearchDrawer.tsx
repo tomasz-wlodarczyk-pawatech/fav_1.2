@@ -37,6 +37,7 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
       setResults([]);
       setError(null);
       setQ("");
+      setIsLoading(false);
     }
   }, [isOpen]);
 
@@ -100,12 +101,6 @@ export function AISearchDrawer({ isOpen, initialQuery = "", onClose }: Props) {
 
           {/* Results */}
           <div className="max-h-[65vh] overflow-y-auto px-4 pb-6 space-y-3">
-            {!q && (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
-                <span className="ml-2 text-sm text-gray-500">Searching...</span>
-              </div>
-            )}
 
             {(isLoading || (q && results.length === 0 && !error)) && (
               <div className="flex items-center justify-center py-8">

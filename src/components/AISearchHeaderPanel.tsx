@@ -5,7 +5,7 @@
 // - Uses MarketMatchCard for market results and MatchCard for 1X2.
 // - Favorites toggle (incl. 1X2) writes to favoritesStoreV2.
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Search as SearchIcon, Loader2 } from "lucide-react";
 import MarketMatchCard from "./MarketMatchCard";
 import { MatchCard } from "./MatchCard";
@@ -27,6 +27,17 @@ export default function AISearchHeaderPanel({ isOpen, onClose, initialQuery = ""
   const [error, setError] = useState<string | null>(null);
 
   if (!isOpen) return null;
+
+  // Reset state when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setQ(initialQuery);
+      setSubmitted(false);
+      setIsLoading(false);
+      setResults([]);
+      setError(null);
+    }
+  }, [isOpen, initialQuery]);
 
   async function runSearch() {
     const query = q.trim();
@@ -80,12 +91,6 @@ export default function AISearchHeaderPanel({ isOpen, onClose, initialQuery = ""
 
             {/* Results */}
             <div className="max-h-[65vh] overflow-y-auto px-4 pb-6 space-y-3">
-              {!submitted && !q && (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
-                  <span className="ml-2 text-sm text-gray-500">Searching...</span>
-                </div>
-              )}
 
               {(isLoading || (submitted && results.length === 0 && !error)) && (
                 <div className="flex items-center justify-center py-8">
